@@ -1,0 +1,22 @@
+﻿@model IList<string>
+@{
+    ViewData["Title"] = "UserRoleDetails";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<h5>UserName: @ViewBag.User.UserName</h5>
+<h5>Salary: @ViewBag.User.DailySalary</h5>
+@if (Model.Any())
+{
+<ul>
+
+        <li>@Model[0]</li>
+    </ul>
+}
+else
+{
+    <h5 style="color:red;">Sorry! @ViewBag.UserName has not been assigned any roles.</h5>
+}
+
+
