@@ -15,7 +15,7 @@ namespace Finalproject.Models
         public string? Name { get; set; }
         public double? PercentageCompleted { get; set; }
         public bool? IsCompleted { get; set; }
-        public int? Priority { get; set; }
+        public Priority? Priority{ get; set; }
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
         public DateTime? DeadLine { get; set; }
@@ -25,6 +25,8 @@ namespace Finalproject.Models
         public virtual Project Project { get; set; } = null!;
         public virtual ICollection<Comment> Comments { get; set; }
         public virtual ICollection<TaskNotification> Notifications { get; set; }
+
     }
+
 }
 
