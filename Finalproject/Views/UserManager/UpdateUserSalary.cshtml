@@ -1,0 +1,15 @@
+﻿@model Finalproject.Models.ApplicationUser
+
+
+<h1>Update User</h1>
+
+<form method="post" asp-action="UpdateUserSalary">
+    <input type="hidden" name="userId" value="@Model.Id"/>
+    <label asp-for="UserName">UserName:</label>
+    <input readonly name="UserName" value="@Model.UserName"/><br />
+    <label asp-for="Email">Email:</label>
+    <input readonly name="Email" value="@Model.Email"/><br />
+    <label asp-for="DailySalary">DailySalary:</label>
+    <input type="number" name="DailySalary" value="@Model.DailySalary"/>
+    <button type="submit">Update</button>
+</form>

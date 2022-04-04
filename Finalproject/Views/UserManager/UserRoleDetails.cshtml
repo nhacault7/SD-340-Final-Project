@@ -5,15 +5,13 @@
 
 <h1>@ViewData["Title"]</h1>
 
-<h5>UserName: @ViewBag.UserName</h5>
+<h5>UserName: @ViewBag.User.UserName</h5>
+<h5>Salary: @ViewBag.User.DailySalary</h5>
 @if (Model.Any())
 {
 <ul>
-    @foreach (var role in Model)
-    {
-        <li>@role</li>
-    }
-    
+
+        <li>@Model[0]</li>
     </ul>
 }
 else

@@ -6,11 +6,15 @@
 <h1>@ViewData["Title"]</h1>
 
 <h5>UserName: @ViewBag.UserName</h5>
+@if(ViewData["Message"] != null){
+    <h5 style="color:red;">@ViewData["Message"]</h5>
+}else{
 
 <form method="post" asp-action="AssignRoleToUser">
     <select asp-items=@Model name="roleId"></select>
     <input type="hidden" name="userId" value="@ViewBag.UserId" />
     <button type="submit">AssignRole</button>
 </form>
+}
 
 

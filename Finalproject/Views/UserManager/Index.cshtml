@@ -31,9 +31,9 @@
                 @Html.DisplayFor(modelItem => item.Email)
             </td>
             <td>
-                <a asp-action="UserRoleDetails" asp-route-userId="@item.Id">Role Details</a> |
+                <a asp-action="UserRoleDetails" asp-route-userId="@item.Id">Details</a> |
                 <a asp-action="AssignRoleToUser" asp-route-userId="@item.Id">Assign a role</a> |
-                <a asp-action="Delete" asp-route-userId="@item.Id">Delete</a>
+                <a asp-action="UpdateUserSalary" asp-route-userId="@item.Id">Update</a>
             </td>
         </tr>
 }

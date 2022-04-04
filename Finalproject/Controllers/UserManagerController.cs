@@ -33,7 +33,7 @@ namespace Finalproject.Controllers
         public async Task<ActionResult> UserRoleDetails(string userId)
         {
             ApplicationUser user = await _userManager.FindByIdAsync(userId);
-            ViewBag.UserName = user.UserName;
+            ViewBag.User = user;
             var roles = await _userManager.GetRolesAsync(user);
             return View(roles);
         }
@@ -45,6 +45,11 @@ namespace Finalproject.Controllers
             ViewBag.UserName = user.UserName;
             ViewBag.UserId = user.Id;
             var rolesOfUser = await _userManager.GetRolesAsync(user);
+            if (rolesOfUser.Any())
+            {
+                string role = rolesOfUser[0];
+                ViewData["Message"] = $"This user already assigned a role: {role}. You can't assign other roles to the user";
+            }
             List<IdentityRole> allRoles = _db.Roles.ToList();
             //get the rols not already assigned to the user
             List<IdentityRole> rolesToAssign = allRoles.Where(a => !rolesOfUser.Contains(a.Name)).ToList();
@@ -73,19 +78,23 @@ namespace Finalproject.Controllers
             }
         }
 
-        // GET: UserManagerController/Delete/5
-        public ActionResult DeleteRole(string userId)
+        // GET: UserManagerController/UpdateUser/5
+        public async Task<ActionResult> UpdateUserSalary(string userId)
         {
-            return View();
+            ApplicationUser user = await _userManager.FindByIdAsync(userId);
+            return View(user);
         }
 
         // POST: UserManagerController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteRole(string userId, string roleId)
+        public async Task<ActionResult> UpdateUserSalary(string userId, float DailySalary)
         {
             try
             {
+                ApplicationUser user = await _userManager.FindByIdAsync(userId);
+                user.DailySalary = DailySalary;
+                _db.SaveChanges();
                 return RedirectToAction(nameof(Index));
             }
             catch
