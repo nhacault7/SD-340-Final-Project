@@ -1,4 +1,7 @@
-﻿using Finalproject.Models;
+﻿using Finalproject.Data;
+using Finalproject.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
@@ -6,15 +9,34 @@ namespace Finalproject.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private ApplicationDbContext _db;
+        private UserManager<ApplicationUser> _userManager;
+        private RoleManager<IdentityRole> _roleManager;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ApplicationDbContext db, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
         {
-            _logger = logger;
+            _db = db;
+            _userManager = userManager;
+            _roleManager = roleManager;
         }
 
+        [Authorize]
         public IActionResult Index()
         {
+            if (User.IsInRole("Admin"))
+            {
+                return RedirectToAction("Index", "UserManager");
+            }else if(User.IsInRole("Project Manager"))
+            {
+                return RedirectToAction("Index", "Dashboard");
+            }else if(User.IsInRole("Project Manager"))
+            {
+                return RedirectToAction("Index", "Development");
+            }
+            else
+            {
+                ViewBag.Message = "Sorry! You have no permission to access this page. Please contact the Administrator.";
+            }
             return View();
         }
 

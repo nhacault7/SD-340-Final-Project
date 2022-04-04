@@ -1,0 +1,16 @@
+﻿@model SelectList
+@{
+    ViewData["Title"] = "AssignRoleToUser";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<h5>UserName: @ViewBag.UserName</h5>
+
+<form method="post" asp-action="AssignRoleToUser">
+    <select asp-items=@Model name="roleId"></select>
+    <input type="hidden" name="userId" value="@ViewBag.UserId" />
+    <button type="submit">AssignRole</button>
+</form>
+
+

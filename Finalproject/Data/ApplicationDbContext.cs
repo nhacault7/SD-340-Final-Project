@@ -4,7 +4,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Finalproject.Data
 {
-    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
+    //clarify applicationDbContext extends the IdentityDbContext, the type of user, role and key type<TKey>
+    //public class ApplicationDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, string>
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser> 
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
