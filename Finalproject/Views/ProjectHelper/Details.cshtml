@@ -106,7 +106,7 @@
 <br />
 <table class="table">
    <h3>Current Tasks:</h3> 
-   <a asp-action="">Create New Task</a>
+   <a asp-action="createTask" asp-route-projectId = "@Model.Id">Create New Task</a>
     <thead>
         <tr>
             <td>Name</td>

@@ -45,7 +45,7 @@ namespace Finalproject.Controllers
             //No discriminators matched the discriminator value 'Project'.
             
            // ViewBag.notifications = _db.Notifications.Where(n=>n.ProjectId == id ).ToList();
-            var currProject =  _db.Projects.Where(p=>p.Id == id).First();
+            var currProject =  _db.Projects.Where(p=>p.Id == id).First();       
             return View(currProject);
         }
 
@@ -182,6 +182,11 @@ namespace Finalproject.Controllers
             {
                 return View();
             }
+        }
+
+        public ActionResult createTask(int projectId)
+        {
+            return RedirectToAction("Create","TaskHelper",projectId);
         }
     }
 }
