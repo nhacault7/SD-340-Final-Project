@@ -28,7 +28,9 @@ namespace Finalproject.Controllers
         // GET: Notifications
         public async Task<IActionResult> Index()
         {
-            return View(await _db.Notifications.ToListAsync());
+            ApplicationUser currentUser = await _userManager.FindByNameAsync(User.Identity.Name);
+
+            return View(_db.Notifications.Where(n => n.UserCreator == currentUser).ToList());
         }
     }
 }
