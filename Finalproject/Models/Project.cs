@@ -19,7 +19,7 @@ namespace Finalproject.Models
         public bool? IsCompleted { get; set; }
         public double? Budget { get; set; }
         public string? TotalCost { get; set; }
-        public int? Priority { get; set; }
+        public Priority? Priority { get; set; }
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
         public DateTime? Deadline { get; set; }
@@ -30,5 +30,12 @@ namespace Finalproject.Models
         public virtual ICollection<ProjectTask> Tasks { get; set; }
     }
 
+    public enum Priority
+    {
+        Urgent,
+        High,
+        Medium,
+        Low
+    }
 }
 
