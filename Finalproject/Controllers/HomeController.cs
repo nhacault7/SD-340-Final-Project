@@ -7,6 +7,7 @@ using System.Diagnostics;
 
 namespace Finalproject.Controllers
 {
+    [Authorize] //Only Logged in User can access this HomeController
     public class HomeController : Controller
     {
         private ApplicationDbContext _db;
@@ -20,7 +21,6 @@ namespace Finalproject.Controllers
             _roleManager = roleManager;
         }
 
-        [Authorize]
         public IActionResult Index()
         {
             if (User.IsInRole("Admin"))
