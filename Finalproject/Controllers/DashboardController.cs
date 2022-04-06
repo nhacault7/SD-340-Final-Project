@@ -32,7 +32,14 @@ namespace Finalproject.Controllers
             {
                 projectIdArr.Add(userProject.ProjectId);
             }
-            var allProjectsOfPM = _db.Projects.Where(p => projectIdArr.Contains(p.Id)).OrderBy(p => p.Priority);
+            var allProjectsOfPM = _db.Projects.Include(p => p.Notifications).Where(p => projectIdArr.Contains(p.Id)).OrderBy(p => p.Priority);
+
+            int count = 0;
+            foreach (var project in allProjectsOfPM)
+            {
+                count += project.Notifications.Count();
+            }
+            ViewData["Count"] = count;
 
             //Pagination
             int pageSize = 10;//the max value is 10 records in every page
