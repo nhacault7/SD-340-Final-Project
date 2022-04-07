@@ -18,7 +18,7 @@ namespace Finalproject.Models
         public double? PercentageCompleted { get; set; }
         public bool? IsCompleted { get; set; }
         public double? Budget { get; set; }
-        public string? TotalCost { get; set; }
+        public float? TotalCost { get; set; }
         public Priority? Priority { get; set; }
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
