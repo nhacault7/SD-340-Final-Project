@@ -28,8 +28,10 @@ namespace Finalproject.Controllers
                 return RedirectToAction("Index", "UserManager");
             }else if(User.IsInRole("Project Manager"))
             {
-                return RedirectToAction("Index", "Dashboard");
-            }else if(User.IsInRole("Developer"))
+               // return RedirectToAction("Index", "Dashboard");
+                return RedirectToAction("Index", "ProjectHelper");
+            }
+            else if(User.IsInRole("Developer"))
             {
                 return RedirectToAction("Index", "Development");
             }
