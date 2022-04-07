@@ -4,6 +4,7 @@ using Finalproject.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Finalproject.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220407181121_changeTotalCostTypeToFloat")]
+    partial class changeTotalCostTypeToFloat
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -116,7 +118,7 @@ namespace Finalproject.Data.Migrations
 
                     b.HasIndex("UserCreatorId");
 
-                    b.ToTable("Comments", (string)null);
+                    b.ToTable("Comments");
                 });
 
             modelBuilder.Entity("Finalproject.Models.Notification", b =>
@@ -153,7 +155,7 @@ namespace Finalproject.Data.Migrations
 
                     b.HasIndex("UserCreatorId");
 
-                    b.ToTable("Notifications", (string)null);
+                    b.ToTable("Notifications");
 
                     b.HasDiscriminator<string>("Discriminator").HasValue("Notification");
                 });
@@ -198,7 +200,7 @@ namespace Finalproject.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Projects", (string)null);
+                    b.ToTable("Projects");
                 });
 
             modelBuilder.Entity("Finalproject.Models.ProjectTask", b =>
@@ -242,7 +244,7 @@ namespace Finalproject.Data.Migrations
 
                     b.HasIndex("UserCreatorId");
 
-                    b.ToTable("Tasks", (string)null);
+                    b.ToTable("Tasks");
                 });
 
             modelBuilder.Entity("Finalproject.Models.UserProject", b =>
@@ -266,7 +268,7 @@ namespace Finalproject.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserProjects", (string)null);
+                    b.ToTable("UserProjects");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
