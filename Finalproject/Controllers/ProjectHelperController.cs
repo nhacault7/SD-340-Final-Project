@@ -142,7 +142,7 @@ namespace Finalproject.Controllers
                     projectToUpdate.PercentageCompleted = double.Parse(collection["PercentageCompleted"].ToString());
                     projectToUpdate.IsCompleted = bool.Parse(collection["IsCompleted"].ToString());
                     projectToUpdate.Budget = double.Parse(collection["Budget"].ToString());
-                    projectToUpdate.TotalCost = collection["TotalCost"].ToString();
+                    projectToUpdate.TotalCost = float.Parse(collection["TotalCost"].ToString());
                     projectToUpdate.Priority = (Priority)Enum.Parse(typeof(Priority), collection["Priority"].ToString());
                     projectToUpdate.StartDate = DateTime.Parse(collection["StartDate"]);
                     projectToUpdate.EndDate = DateTime.Parse(collection["EndDate"]);
