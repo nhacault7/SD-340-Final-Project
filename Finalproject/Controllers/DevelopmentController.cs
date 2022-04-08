@@ -61,33 +61,90 @@ namespace Finalproject.Controllers
             return View(await PaginatedList<ProjectTask>.CreateAsync(allTasksOfDev.AsNoTracking(), pageNumber ?? 1, pageSize));
         }
 
-        // GET: DevelopmentController/Details/5
-        public ActionResult Details(int taskId)
+        // GET: DevelopmentController/TaskDetails/5
+        public ActionResult TaskDetails(int taskId)
         {
-            return View();
+            ProjectTask task = _db.Tasks.Include(t => t.Project).Include(t => t.Comments.OrderByDescending(c => c.CommentType)).First(t => t.Id == taskId);
+            return View(task);
         }
 
 
-        // GET: DevelopmentController/Edit/5
-        public ActionResult TaskEdit(int taskId)
+        // GET: DevelopmentController/UpdateTask/5
+        public ActionResult UpdateTask(int taskId)
         {
-            return View();
+            ProjectTask task = _db.Tasks.Include(t => t.Project).First(t => t.Id == taskId);
+            return View(task);
         }
 
-        // POST: DevelopmentController/Edit/5
+        // POST: DevelopmentController/UpdateTask/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult UpdateTask(int id, IFormCollection collection)
         {
             try
             {
+                ProjectTask taskToUpdate = _db.Tasks.Find(id);
+                if (taskToUpdate == null)
+                {
+                    return NotFound();
+                }
+                taskToUpdate.PercentageCompleted = double.Parse(collection["PercentageCompleted"]);
+                if(taskToUpdate.PercentageCompleted == 100)
+                {
+                    taskToUpdate.IsCompleted = true;
+                    //check if the all tasks of the project are completed?
+                    //If yes, call the CalculateTotalCost() method to update the total cost of the project
+                }
+                _db.SaveChanges();
+
                 return RedirectToAction(nameof(Index));
             }
-            catch
+            catch(Exception ex)
             {
-                return View();
+                ViewBag.Message = ex.Message;
+                return View("Error");
             }
         }
 
+        public ActionResult AddComments(int taskId)
+        {
+            ProjectTask taskToAddComments = _db.Tasks.First(t => t.Id == taskId);
+            if(taskToAddComments != null)
+            {
+                ViewBag.Task = taskToAddComments;
+                
+            }
+            else
+            {
+                return NotFound();
+            }
+
+            return  View();
+        }
+
+        // POST: DevelopmentController/AddCommentForTask/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> AddComments(IFormCollection collection)
+        {
+            try
+            {
+                Comment newComment = new Comment();
+                newComment.CommentType = (CommentType)int.Parse(collection["CommentType"]);
+                newComment.Text = collection["Text"];
+                newComment.TaskId = int.Parse(collection["TaskId"]);
+                newComment.UserCreator = await _userManager.FindByNameAsync(User.Identity.Name);
+
+                _db.Comments.Add(newComment);
+                _db.SaveChanges();
+
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                ViewBag.Message = ex.Message;
+                return View("Error");
+            }
+        }
     }
 }

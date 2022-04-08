@@ -1,57 +1,63 @@
 ﻿@model Finalproject.Models.ProjectTask
 
 @{
-    ViewData["Title"] = "TaskEdit";
+    ViewData["Title"] = "UpdateTask";
 }
 
-<h1>TaskEdit</h1>
+<h1>UpdateTask</h1>
 
 <h4>ProjectTask</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="TaskEdit">
+        <form method="post" asp-action="UpdateTask">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
+                <input readonly asp-for="Name" class="form-control" />
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="PercentageCompleted" class="control-label"></label>
-                <input asp-for="PercentageCompleted" class="form-control" />
+                <label asp-for="PercentageCompleted" class="control-label"></label><br />
+                @if (Model.IsCompleted == true)
+                {
+                    <progress style="width:130px;" max="100" value="@Model.PercentageCompleted"></progress>
+                }else{
+                    <input asp-for="PercentageCompleted" type="range" style="width:150px;" max="100" value="@Model.PercentageCompleted" onchange="document.getElementById('show').innerHTML=value"/>
+                }
+                <span id="show">@Model.PercentageCompleted</span>
                 <span asp-validation-for="PercentageCompleted" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="IsCompleted" class="control-label"></label>
-                <input asp-for="IsCompleted" class="form-control" />
+                <input readonly asp-for="IsCompleted" class="form-control" />
                 <span asp-validation-for="IsCompleted" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Priority" class="control-label"></label>
-                <input asp-for="Priority" class="form-control" />
+                <input readonly asp-for="Priority" class="form-control" />
                 <span asp-validation-for="Priority" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="StartDate" class="control-label"></label>
-                <input asp-for="StartDate" class="form-control" />
+                <input readonly asp-for="StartDate" class="form-control" />
                 <span asp-validation-for="StartDate" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="EndDate" class="control-label"></label>
-                <input asp-for="EndDate" class="form-control" />
+                <input readonly asp-for="EndDate" class="form-control" />
                 <span asp-validation-for="EndDate" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="DeadLine" class="control-label"></label>
-                <input asp-for="DeadLine" class="form-control" />
+                <input readonly asp-for="DeadLine" class="form-control" />
                 <span asp-validation-for="DeadLine" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="ProjectId" class="control-label"></label>
-                <select asp-for="ProjectId" class="form-control" asp-items="ViewBag.ProjectId"></select>
-                <span asp-validation-for="ProjectId" class="text-danger"></span>
+                <label asp-for="Project.Title" class="control-label"></label>
+                <input readonly asp-for="Project.Title" class="form-control" />
+                <span asp-validation-for="Project.Title" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />

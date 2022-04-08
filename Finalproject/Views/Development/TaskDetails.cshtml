@@ -20,7 +20,8 @@
             @Html.DisplayNameFor(model => model.PercentageCompleted)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.PercentageCompleted)
+            <progress style="width:130px;" max="100" value="@Model.PercentageCompleted"></progress>
+            <span id="show">@Model.PercentageCompleted</span>
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.IsCompleted)
@@ -56,11 +57,37 @@
             @Html.DisplayNameFor(model => model.Project)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Project.Id)
+            @Html.DisplayFor(model => model.Project.Title)
         </dd>
     </dl>
 </div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Comments.First().CommentType)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Comments.First().Text)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.Comments) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.CommentType)
+            </td>
+            <td>
+                @Html.Raw(item.Text)
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
+    <a asp-action="UpdateTask" asp-route-taskId="@Model?.Id">UpdateTask</a> |
     <a asp-action="Index">Back to List</a>
 </div>

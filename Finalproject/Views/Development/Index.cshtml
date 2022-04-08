@@ -73,7 +73,7 @@
                 @Html.DisplayFor(modelItem => item.Project.Title)
             </td>
             <td>
-                <a asp-action="TaskEdit" asp-route-taskId="@item.Id">Edit</a> |
+                <a asp-action="UpdateTask" asp-route-taskId="@item.Id">UpdateTask</a> |
                 <a asp-action="TaskDetails" asp-route-taskId="@item.Id">Details</a> |
                     @if (item.IsCompleted == true)
                     {
@@ -85,3 +85,25 @@
 }
     </tbody>
 </table>
+
+@*The properties HasPreviousPage and HasNextPage can be used to enable or disable Previous and Next paging buttons*@
+@{
+    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+}
+
+@*Show current page index and total pages*@
+Page @(Model.TotalPages < Model.PageIndex ? 0 : Model.PageIndex) of @Model.TotalPages
+
+@*Go to previous page: pageIndex -1, and pass the pageNumber to Action Index*@
+<a asp-action="Index"
+   asp-route-pageNumber="@(Model.PageIndex - 1)"
+   class="btn btn-default @prevDisabled">
+    Previous
+</a>
+@*Go to next page: pageIndex +1*@
+<a asp-action="Index"
+   asp-route-pageNumber="@(Model.PageIndex + 1)"
+   class="btn btn-default @nextDisabled">
+    Next
+</a>
