@@ -84,6 +84,18 @@ namespace Finalproject.Controllers
             try
             {
                 ProjectTask taskToUpdate = _db.Tasks.Find(id);
+                Project project = _db.Projects.Include(p => p.Tasks).Include(p => p.UserProjects).ThenInclude( up => up.User).First(p => p.Id == taskToUpdate.ProjectId);
+                //Get PM's UserId
+                string pmUserId = "";
+                foreach (var teamMember in project.UserProjects)
+                {
+                    if (await _userManager.IsInRoleAsync(teamMember.User, "Project Manager"))
+                    {
+                        pmUserId = teamMember.UserId;
+                    }
+                }
+                ApplicationUser userOfPM = await _userManager.FindByIdAsync(pmUserId);
+
                 if (taskToUpdate == null)
                 {
                     return NotFound();
@@ -94,57 +106,13 @@ namespace Finalproject.Controllers
                     taskToUpdate.IsCompleted = true;
                     taskToUpdate.EndDate = DateTime.Now;
 
-                    Project project = _db.Projects.Include(p => p.Tasks).Include(p => p.UserProjects).ThenInclude( up => up.User).First(p => p.Id == taskToUpdate.ProjectId);
-
                     //check if the all tasks of the project are completed?
                     //If yes, calculate the TotalCost to update the value total cost of the project
-                    if(project.Tasks.All(t => t.IsCompleted == true))
-                    {
-                        float totalCost = 0;
-                        float projectCost = 0;
-                        float tasksTotalCost = 0;
-                        string pmUserId = "";
-                    
-                        //Get PM's UserId
-                        foreach (var teamMember in project.UserProjects)
-                        {
-                            if (await _userManager.IsInRoleAsync(teamMember.User, "Project Manager"))
-                            {
-                                pmUserId = teamMember.UserId;
-                            }
-                        }
-                        //Get the PM's project salary
-                        ApplicationUser user = await _userManager.FindByIdAsync(pmUserId);
-                        projectCost = user.DailySalary;
-
-                        //Get the cost of all tasks
-                        var tasks = _db.Tasks.Where(p => p.ProjectId == taskToUpdate.ProjectId).ToList();
-                        foreach (var task in tasks)
-                        {
-                            user = await _userManager.FindByIdAsync(task.UserCreator.Id);
-                            DateTime endDate = DateTime.Now;
-
-                            if ((bool)task.IsCompleted && task.EndDate != null)
-                            {
-                                endDate = (DateTime)task.EndDate;   
-                            }
-
-                            TimeSpan totalDays = (TimeSpan)(endDate - task.StartDate);
-                            tasksTotalCost += (totalDays.Days + 1) * user.DailySalary;
-                        }
-
-                        totalCost = tasksTotalCost + projectCost;
-
-                        //set the TotalCost of the project
-                        project.TotalCost = totalCost;
-                        project.IsCompleted = true;
-                        project.PercentageCompleted = 100;
-                        project.EndDate = DateTime.Now;
-                    }
-
+                    await CalculateTotalCostOfProjectAsync(project, userOfPM, taskToUpdate);
                 }
                 _db.SaveChanges();
-
+                //check if either the project or task is completed, send a notification to project manager
+                SendCompletedNotification(project, userOfPM, taskToUpdate);
                 return RedirectToAction(nameof(Index));
             }
             catch(Exception ex)
@@ -195,5 +163,75 @@ namespace Finalproject.Controllers
             }
         }
 
+        //check if either the project or task is completed, send a notification to project manager
+        public void SendCompletedNotification(Project project, ApplicationUser userOfPM, ProjectTask? task)
+        {
+            if(project != null && project.IsCompleted == true)
+            {
+                Notification projectCompletedNotificaiton = new ProjectNotification()
+                {
+                    Title = $"Project {project.Title} is completed",
+                    Description = $"Project {project.Title} is completed",
+                    ProjectId = project.Id,
+                    IsRead = false,
+                    UserCreator = userOfPM,
+                };
+                _db.Notifications.Add(projectCompletedNotificaiton);
+            }
+
+            if (task != null && task.IsCompleted == true)
+            {
+                Notification taskCompletedNotificaiton = new TaskNotification()
+                {
+                    Title = $"Task {task.Name} is completed",
+                    Description = $"Task {task.Name} is completed",
+                    TaskId = task.Id,
+                    ProjectId = task.ProjectId,
+                    IsRead = false,
+                    UserCreator = userOfPM,
+                };
+                _db.Notifications.Add(taskCompletedNotificaiton);
+            }
+            _db.SaveChanges();
+        }
+
+        public async Task CalculateTotalCostOfProjectAsync(Project project, ApplicationUser userOfPM, ProjectTask taskToUpdate)
+        {
+            float totalCost = 0;
+            float projectCost = 0;
+            float tasksTotalCost = 0;
+
+            if (project.Tasks.All(t => t.IsCompleted == true))
+            {
+                //Get the PM's project salary
+
+                projectCost = userOfPM.DailySalary;
+
+                //Get the cost of all tasks
+                var tasks = _db.Tasks.Where(p => p.ProjectId == taskToUpdate.ProjectId).ToList();
+                foreach (var task in tasks)
+                {
+                    userOfPM = await _userManager.FindByIdAsync(task.UserCreator.Id);
+                    DateTime endDate = DateTime.Now;
+
+                    if ((bool)task.IsCompleted && task.EndDate != null)
+                    {
+                        endDate = (DateTime)task.EndDate;
+                    }
+
+                    TimeSpan totalDays = (TimeSpan)(endDate - task.StartDate);
+                    tasksTotalCost += (totalDays.Days + 1) * userOfPM.DailySalary;
+                }
+
+                totalCost = tasksTotalCost + projectCost;
+
+                //set the TotalCost of the project
+                project.TotalCost = totalCost;
+                project.IsCompleted = true;
+                project.PercentageCompleted = 100;
+                project.EndDate = DateTime.Now;
+
+            }
+        }
     }
 }
