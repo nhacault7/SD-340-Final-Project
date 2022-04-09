@@ -32,5 +32,55 @@ namespace Finalproject.Controllers
 
             return View(_db.Notifications.Where(n => n.UserCreator == currentUser).ToList());
         }
+
+        [HttpPost]
+        public async Task<IActionResult> Index(string? ok)
+        {
+            ApplicationUser currentUser = await _userManager.FindByNameAsync(User.Identity.Name);
+            var allUserNotifications = _db.Notifications.Where(n => n.UserCreator == currentUser).ToList();
+
+            if (allUserNotifications.Any())
+            {
+                foreach (var notification in allUserNotifications)
+                {
+                    _db.Notifications.Remove(notification);
+                }
+
+                _db.SaveChanges();
+            }
+
+            //var projects = _db.Projects.Include(t => t.Tasks).ToList();
+            var userProjects = _db.UserProjects.Where(up => up.UserId == currentUser.Id).ToList();
+            List<Project> projects = new List<Project>();
+            foreach (var userProject in userProjects)
+            {
+                projects.Add(userProject.Project);
+            }
+
+            if (projects.Any())
+            {
+                DateTime today = DateTime.Today;
+
+                foreach (var project in projects)
+                {
+                    if (project.IsCompleted == false && project.Deadline < today)
+                    {
+                        Notification pyNotification = new ProjectNotification();
+                        pyNotification.Title = "Project:" + project.Title + " has passed its Deadline with unfinished tasks";
+                        pyNotification.IsRead = false;
+                        pyNotification.Description = "This project has at least one unfinished task";
+                        pyNotification.ProjectId = project.Id;
+                        pyNotification.UserCreator = currentUser;
+
+                        _db.Notifications.Add(pyNotification);
+                        _db.SaveChanges();
+                    }
+                }
+            }
+
+
+
+            return RedirectToAction("Index");
+        }
     }
 }
