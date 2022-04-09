@@ -34,11 +34,8 @@ namespace Finalproject.Controllers
             }
             var allProjectsOfPM = _db.Projects.Include(p => p.Notifications).Where(p => projectIdArr.Contains(p.Id)).OrderBy(p => p.Priority);
 
-            int count = 0;
-            foreach (var project in allProjectsOfPM)
-            {
-                count += project.Notifications.Count();
-            }
+            var unreadNotifications = _db.Notifications.Where(n => n.UserCreator.Id == currentUser.Id && n.IsRead == false).ToList();
+            int count = unreadNotifications.Count();
             ViewData["Count"] = count;
 
             //Pagination
