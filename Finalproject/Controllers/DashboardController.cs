@@ -33,6 +33,10 @@ namespace Finalproject.Controllers
                 projectIdArr.Add(userProject.ProjectId);
             }
 
+            var unreadNotifications = _db.Notifications.Where(n => n.UserCreator.Id == currentUser.Id && n.IsRead == false).ToList();
+            int count = unreadNotifications.Count();
+            ViewData["Count"] = count;
+
             var allProjectsOfPM = _db.Projects.Where(p => projectIdArr.Contains(p.Id)).OrderBy(p => p.Priority);
             if(orderString != null)
             {

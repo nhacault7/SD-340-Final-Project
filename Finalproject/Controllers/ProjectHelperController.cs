@@ -60,7 +60,7 @@ namespace Finalproject.Controllers
         {
             try
             {
-                if ( ModelState.IsValid )
+                if (ModelState.IsValid)
                 {
                     var currUsername = User.Identity.Name;
                     ApplicationUser currUser = await _userManager.FindByEmailAsync(currUsername);
@@ -73,11 +73,11 @@ namespace Finalproject.Controllers
                     project.TotalCost = 0;
                     project.IsCompleted = false;
                     project.Deadline = DateTime.Parse(collection["Deadline"]);
-                    project.Priority = (Priority)Enum.Parse(typeof(Priority),collection["Priority"].ToString());
+                    project.Priority = (Priority)Enum.Parse(typeof(Priority), collection["Priority"].ToString());
                     project.Budget = double.Parse(collection["Budget"]);
-                    project.IsCompleted = false; 
+                    project.IsCompleted = false;
                     _db.Projects.Add(project);
-                   
+
 
                     //add userProject to track user-project relationship
                     UserProject userProject = new UserProject();
@@ -89,12 +89,12 @@ namespace Finalproject.Controllers
 
                     _db.SaveChanges();
 
-                    return RedirectToAction("Index","Dashboard");
+                    return RedirectToAction("Index", "Dashboard");
                 }
                 else
                 {
                     return BadRequest();
-                }  
+                }
             }
             catch
             {
