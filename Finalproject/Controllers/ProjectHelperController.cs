@@ -75,6 +75,7 @@ namespace Finalproject.Controllers
                     project.Deadline = DateTime.Parse(collection["Deadline"]);
                     project.Priority = (Priority)Enum.Parse(typeof(Priority),collection["Priority"].ToString());
                     project.Budget = double.Parse(collection["Budget"]);
+                    project.IsCompleted = false; 
                     _db.Projects.Add(project);
                    
 
