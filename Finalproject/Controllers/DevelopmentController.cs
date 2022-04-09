@@ -79,7 +79,7 @@ namespace Finalproject.Controllers
         // POST: DevelopmentController/UpdateTask/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult UpdateTask(int id, IFormCollection collection)
+        public async Task<ActionResult> UpdateTask(int id, IFormCollection collection)
         {
             try
             {
@@ -92,8 +92,56 @@ namespace Finalproject.Controllers
                 if(taskToUpdate.PercentageCompleted == 100)
                 {
                     taskToUpdate.IsCompleted = true;
+                    taskToUpdate.EndDate = DateTime.Now;
+
+                    Project project = _db.Projects.Include(p => p.Tasks).Include(p => p.UserProjects).ThenInclude( up => up.User).First(p => p.Id == taskToUpdate.ProjectId);
+
                     //check if the all tasks of the project are completed?
-                    //If yes, call the CalculateTotalCost() method to update the total cost of the project
+                    //If yes, calculate the TotalCost to update the value total cost of the project
+                    if(project.Tasks.All(t => t.IsCompleted == true))
+                    {
+                        float totalCost = 0;
+                        float projectCost = 0;
+                        float tasksTotalCost = 0;
+                        string pmUserId = "";
+                    
+                        //Get PM's UserId
+                        foreach (var teamMember in project.UserProjects)
+                        {
+                            if (await _userManager.IsInRoleAsync(teamMember.User, "Project Manager"))
+                            {
+                                pmUserId = teamMember.UserId;
+                            }
+                        }
+                        //Get the PM's project salary
+                        ApplicationUser user = await _userManager.FindByIdAsync(pmUserId);
+                        projectCost = user.DailySalary;
+
+                        //Get the cost of all tasks
+                        var tasks = _db.Tasks.Where(p => p.ProjectId == taskToUpdate.ProjectId).ToList();
+                        foreach (var task in tasks)
+                        {
+                            user = await _userManager.FindByIdAsync(task.UserCreator.Id);
+                            DateTime endDate = DateTime.Now;
+
+                            if ((bool)task.IsCompleted && task.EndDate != null)
+                            {
+                                endDate = (DateTime)task.EndDate;   
+                            }
+
+                            TimeSpan totalDays = (TimeSpan)(endDate - task.StartDate);
+                            tasksTotalCost += (totalDays.Days + 1) * user.DailySalary;
+                        }
+
+                        totalCost = tasksTotalCost + projectCost;
+
+                        //set the TotalCost of the project
+                        project.TotalCost = totalCost;
+                        project.IsCompleted = true;
+                        project.PercentageCompleted = 100;
+                        project.EndDate = DateTime.Now;
+                    }
+
                 }
                 _db.SaveChanges();
 
@@ -146,5 +194,6 @@ namespace Finalproject.Controllers
                 return View("Error");
             }
         }
+
     }
 }
