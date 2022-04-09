@@ -116,7 +116,7 @@ namespace Finalproject.Data.Migrations
 
                     b.HasIndex("UserCreatorId");
 
-                    b.ToTable("Comments");
+                    b.ToTable("Comments", (string)null);
                 });
 
             modelBuilder.Entity("Finalproject.Models.Notification", b =>
@@ -153,7 +153,7 @@ namespace Finalproject.Data.Migrations
 
                     b.HasIndex("UserCreatorId");
 
-                    b.ToTable("Notifications");
+                    b.ToTable("Notifications", (string)null);
 
                     b.HasDiscriminator<string>("Discriminator").HasValue("Notification");
                 });
@@ -198,7 +198,7 @@ namespace Finalproject.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Projects");
+                    b.ToTable("Projects", (string)null);
                 });
 
             modelBuilder.Entity("Finalproject.Models.ProjectTask", b =>
@@ -242,7 +242,7 @@ namespace Finalproject.Data.Migrations
 
                     b.HasIndex("UserCreatorId");
 
-                    b.ToTable("Tasks");
+                    b.ToTable("Tasks", (string)null);
                 });
 
             modelBuilder.Entity("Finalproject.Models.UserProject", b =>
@@ -266,7 +266,7 @@ namespace Finalproject.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserProjects");
+                    b.ToTable("UserProjects", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>

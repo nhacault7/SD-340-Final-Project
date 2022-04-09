@@ -1,0 +1,71 @@
+﻿@model Finalproject.Models.Comment
+@{
+    ViewData["Title"] = "PostNewQuestion";
+}
+
+<!--Using Summernote in APS.NET 6 -->
+
+<!--All CSS stylesheet go at the top of the page-->
+<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet">
+
+@{
+    ViewData["Title"] = "AddComments";
+}
+
+<h1>AddComments</h1>
+
+<h4>Comment</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form method="post" asp-action="AddComments">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <input type="hidden" asp-for="TaskId"/>
+                <label asp-for="Task.Name" class="control-label"></label>
+                <input readonly asp-for="Task.Name" value="@ViewBag.Task.Name" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label asp-for="CommentType" class="control-label"></label>
+                <select asp-for="CommentType" asp-items="Html.GetEnumSelectList<CommentType>()" class="form-control"></select>
+                <span asp-validation-for="CommentType" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Text" class="control-label"></label>
+                <textarea asp-for="Text" id="summernote" placeholder="Please add some comments"></textarea>
+                <span asp-validation-for="Text" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+     <!--JQuery and Bootstrap scripts come first-->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+     <!-- Then add summernote script-->
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
+    <!-- Then add the final script-->
+    <script>
+    $(document).ready(function() {
+        $('#summernote').summernote({
+          width: 600,                 // set editor height
+          height: 400,                 // set editor height
+          minHeight: null,             // set minimum height of editor
+          maxHeight: null,             // set maximum height of editor
+          focus: true                  // set focus to editable area after initializing summernote
+        });
+    });
+
+    </script>
+}

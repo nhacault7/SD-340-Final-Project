@@ -22,8 +22,8 @@ namespace Finalproject.Controllers
             _roleManager = roleManager;
         }
         // GET: DashBoardController
-        public async Task<ActionResult> Index(string searchString, int? pageNumber)
-        {     
+        public async Task<ActionResult> Index(string orderString, string searchString, int? pageNumber)
+        {
             //Get all projects only belonged to the current logged in PM
             ApplicationUser currentUser = await _userManager.FindByNameAsync(User.Identity.Name);
             List<UserProject> userProjects = _db.UserProjects.Include(up => up.Project).Where(up => up.UserId == currentUser.Id).ToList();
@@ -32,7 +32,22 @@ namespace Finalproject.Controllers
             {
                 projectIdArr.Add(userProject.ProjectId);
             }
+
             var allProjectsOfPM = _db.Projects.Where(p => projectIdArr.Contains(p.Id)).OrderBy(p => p.Priority);
+            if(orderString != null)
+            {
+                if (orderString == "IsCompleted")
+                {
+                    allProjectsOfPM = allProjectsOfPM.OrderByDescending(p => p.IsCompleted);
+                }else if(orderString == "PercentageCompleted")
+                {
+                    allProjectsOfPM = allProjectsOfPM.OrderByDescending(p => p.PercentageCompleted);
+                }else
+                {
+                    allProjectsOfPM = allProjectsOfPM.OrderBy(p => p.Priority);
+                }
+                    
+            }
 
             //Pagination
             int pageSize = 10;//the max value is 10 records in every page

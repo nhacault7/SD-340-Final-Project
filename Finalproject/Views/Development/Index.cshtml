@@ -1,21 +1,15 @@
-﻿@model PaginatedList<Finalproject.Models.Project>
+﻿@model PaginatedList<Finalproject.Models.ProjectTask>
+
 @{
     ViewData["Title"] = "Index";
 }
 
 <h1>Index</h1>
 
-<p>
-    <a asp-action="Create" asp-controller="ProjectHelper">Create New</a>
-    <a asp-action="OverdueTasks">Overdue Tasks</a>
-    <a asp-action="ExceedBudgetProjects" asp-controller="ProjectsExceededBudget">Exceeded Budget Projects</a>
-</p>
-
-
-@using (Html.BeginForm("Index", "Dashboard", FormMethod.Get))
+@using (Html.BeginForm("Index", "Development", FormMethod.Get))
 {
     <p>
-        Find by Title: @Html.TextBox("SearchString", ViewBag.CurrentFilter as string) 
+        Find by Name: @Html.TextBox("SearchString", ViewBag.CurrentFilter as string) 
         <input type="submit" value="Search" />
     </p>
 }
@@ -24,23 +18,13 @@
     <thead>
         <tr>
             <th>
-                Title
-            </th>
-            <th>
-                Description
+                Name
             </th>
             <th>
                 <a asp-action="Index" asp-route-orderString="PercentageCompleted">PercentageCompleted</a> 
             </th>
             <th>
                 <a asp-action="Index" asp-route-orderString="IsCompleted">IsCompleted</a> 
-                
-            </th>
-            <th>
-                Budget
-            </th>
-            <th>
-                TotalCost
             </th>
             <th>
                 <a asp-action="Index" asp-route-orderString="Priority">Priority</a>
@@ -52,7 +36,10 @@
                 EndDate
             </th>
             <th>
-                Deadline
+                DeadLine
+            </th>
+            <th>
+                Project
             </th>
             <th></th>
         </tr>
@@ -61,24 +48,14 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-               @Html.DisplayFor(modelItem => item.Title)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
+                @Html.DisplayFor(modelItem => item.Name)
             </td>
             <td>
                 <progress style="width:130px;" max="100" value="@item.PercentageCompleted"></progress>
-                @*<input type="range" disabled style="width:150px;" max="100" value="@item.PercentageCompleted" onchange="document.getElementById('show').innerHTML=value"/>*@
                 <span id="show">@item.PercentageCompleted</span>
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.IsCompleted)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Budget)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TotalCost)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Priority)
@@ -90,18 +67,25 @@
                 @Html.DisplayFor(modelItem => item.EndDate)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Deadline)
+                @Html.DisplayFor(modelItem => item.DeadLine)
             </td>
             <td>
-                <a asp-action="Edit" asp-controller="ProjectHelper" asp-route-projectId="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-controller="ProjectHelper" asp-route-projectId="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-controller="ProjectHelper" asp-route-projectId="@item.Id">Delete</a>
+                @Html.DisplayFor(modelItem => item.Project.Title)
+            </td>
+            <td>
+                <a asp-action="UpdateTask" asp-route-taskId="@item.Id">UpdateTask</a> |
+                <a asp-action="TaskDetails" asp-route-taskId="@item.Id">Details</a> |
+                    @if (item.IsCompleted == true)
+                    {
+                        <a asp-action="AddComments" asp-route-taskId="@item.Id">Add Comments</a>
+                    }
+                
             </td>
         </tr>
-
 }
     </tbody>
 </table>
+
 @*The properties HasPreviousPage and HasNextPage can be used to enable or disable Previous and Next paging buttons*@
 @{
     var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
