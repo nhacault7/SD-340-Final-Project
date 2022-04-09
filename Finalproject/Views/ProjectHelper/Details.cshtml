@@ -6,67 +6,67 @@
 
 <h1>Project Details</h1>
 
-<div  >
+<div>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Title)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Title)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Description)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Description)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.PercentageCompleted)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.PercentageCompleted)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.IsCompleted)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.IsCompleted)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Budget)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Budget)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.TotalCost)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.TotalCost)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Priority)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Priority)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.StartDate)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.StartDate)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.EndDate)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.EndDate)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Deadline)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Deadline)
         </dd>
     </dl>
@@ -77,60 +77,69 @@
 </div>
 <br />
 @*<div >
-     <h3>Notification Center</h3>
-     <table class="table">
-         <thead>
-             <tr>
-                 <td>Title</td>
-                 <td>Description</td>
-                 <td>IsRead</td>
-                 <td>Title</td>
-                 <td>Discriminator</td>
-             </tr>
-         </thead>
-         <tbody>
-            @foreach(var notification in ViewBag.notifications)
-            {
-               <tr>
-                   <td>@notification.Title</td>
-                   <td>@notification.Description</td>
-                   <td>@notification.IsRead</td>
-                   <td>@notification.Title</td>
-                   <td>@notification.Discriminator</td>
-               </tr> 
-            }
-        </tbody>
-     </table>
-</div>*@
+    <h3>Notification Center</h3>
+    <table class="table">
+    <thead>
+    <tr>
+    <td>Title</td>
+    <td>Description</td>
+    <td>IsRead</td>
+    <td>Title</td>
+    <td>Discriminator</td>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach(var notification in ViewBag.notifications)
+    {
+    <tr>
+    <td>@notification.Title</td>
+    <td>@notification.Description</td>
+    <td>@notification.IsRead</td>
+    <td>@notification.Title</td>
+    <td>@notification.Discriminator</td>
+    </tr>
+    }
+    </tbody>
+    </table>
+    </div>*@
 
 <br />
 <table class="table">
-   <h3>Current Tasks:</h3> 
-   <a asp-action="createTask" asp-route-projectId = "@Model.Id">Create New Task</a>
+    <h3>Current Tasks:</h3>
+    <a asp-action="Create" asp-controller="TaskHelper" asp-route-projectId="@Model.Id">Create New Task</a>
     <thead>
         <tr>
-            <td>Name</td>
-            <td>PercentageCompleted</td>
-            <td>IsCompleted</td>
-            <td>Priority</td>
-            <td>StartDate</td>
-            <td>EndDate</td>
-            <td>DeadLine</td>
-            <td>Developer</td>
+            <th>Name</th>
+            <th>PercentageCompleted</th>
+            <th>Priority</th>
+            <th>StartDate</th>
+            <th>DeadLine</th>
+            <th>Developer</th>
+            <th>Manage Task</th>
         </tr>
     </thead>
     <tbody>
-        @foreach(var item in ViewBag.tasks )
+        @foreach ( var item in ViewBag.tasks )
         {
             <tr>
                 <td>@item.Name</td>
                 <td>@item.PercentageCompleted</td>
-                <td>@item.IsCompleted</td>
                 <td>@item.Priority</td>
-                <td>@item.StartDate</td>
-                <td>@item.EndDate</td>
-                <td>@item.DeadLine</td>
-                <td>@item.UserCreator.UserName</td>
+                <td>@item.StartDate.ToString("yyyy-MM-dd")</td>
+                <td>@item.DeadLine.ToString("yyyy-MM-dd")</td>
+                @if ( item.UserCreator != null )
+                {
+                    <td>@item.UserCreator.UserName</td>
+                }
+                @if ( item.UserCreator == null )
+                {
+                    <td>No assigned developer yet</td>
+                }
+                <td>
+                    <a asp-action="Edit" asp-controller="TaskHelper" asp-route-projectId="@item.Id">Edit</a> |
+                    <a asp-action="Details" asp-controller="TaskHelper" asp-route-projectId="@item.Id">Details</a> |
+                    <a asp-action="Delete" asp-controller="TaskHelper" asp-route-projectId="@item.Id">Delete</a>
+                </td>
             </tr>
         }
     </tbody>
