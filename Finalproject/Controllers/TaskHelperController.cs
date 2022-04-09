@@ -165,23 +165,62 @@ namespace Finalproject.Controllers
         }
 
         // GET: TaskHelperController/Delete/5
-        public ActionResult Delete(int id)
+        public async Task<ActionResult> Delete(int taskId)
         {
-            return View();
+            ProjectTask currTask = _db.Tasks.First(t => t.Id == taskId);
+            if ( currTask != null )
+            {
+                string currUserName = User.Identity.Name;
+                ApplicationUser projectManager = await _userManager.FindByNameAsync(currUserName);
+                //to check if the current project belongs to the corresponding project manager
+                var belongsToTheManager = _db.UserProjects.Where(u => u.UserId == projectManager.Id).Any(u => u.ProjectId == currTask.ProjectId);
+
+                if ( belongsToTheManager )
+                {
+                    return View(currTask);
+                }
+                else
+                {
+                    return RedirectToAction("Details", "ProjectHelper", new
+                    {
+                        projectId = currTask.ProjectId
+                    });
+                }
+            }
+            else
+            {
+                return NotFound();
+            }
         }
 
         // POST: TaskHelperController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public ActionResult Delete(int Id, IFormCollection collection)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+               ProjectTask taskToDelete = _db.Tasks.First(t => t.Id == Id);
+                if ( taskToDelete != null )
+                {
+                     var currTaskProjectId = taskToDelete.ProjectId;
+                    _db.Remove(taskToDelete);
+                    _db.SaveChanges();
+                    return RedirectToAction("Details", "ProjectHelper", new
+                    {
+                        projectId = currTaskProjectId
+                    });
+                    ;
+
+                }
+                else
+                {
+                    return NotFound();
+                }
             }
             catch
             {
-                return View();
+                return BadRequest();
             }
         }
     }
