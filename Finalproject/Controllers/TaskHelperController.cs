@@ -78,6 +78,7 @@ namespace Finalproject.Controllers
                     newTask.PercentageCompleted = 0;
                     newTask.StartDate = DateTime.Today;
                     newTask.IsCompleted = false;
+                    
                     _db.Tasks.Add(newTask);
                     _db.SaveChanges();
 
@@ -98,19 +99,64 @@ namespace Finalproject.Controllers
         }
 
         // GET: TaskHelperController/Edit/5
-        public ActionResult Edit(int id)
+        public async Task<ActionResult> Edit(int taskId)
         {
-            return View();
+            ProjectTask currTask = _db.Tasks.First(t => t.Id == taskId);
+            if ( currTask != null )
+            {
+                string currUserName = User.Identity.Name;
+                ApplicationUser projectManager = await _userManager.FindByNameAsync(currUserName);
+                //to check if the current project belongs to the corresponding project manager
+                var belongsToTheManager = _db.UserProjects.Where(u => u.UserId == projectManager.Id).Any(u => u.ProjectId == currTask.ProjectId);
+               
+                if ( belongsToTheManager )
+                {
+                    ViewBag.projectId = currTask.ProjectId;
+                    List<SelectListItem> priorities = new List<SelectListItem>
+                    {
+                        new SelectListItem(){ Text = "Urgent", Value = Priority.Urgent.ToString() },
+                        new SelectListItem(){ Text = "High", Value = Priority.High.ToString() },
+                        new SelectListItem(){ Text = "Medium", Value = Priority.Medium.ToString() },
+                        new SelectListItem(){ Text = "Low", Value = Priority.Low.ToString() }
+                    };
+                    ViewBag.priorityList = priorities;
+                    return View(currTask);
+                }
+                else
+                {        
+                    return RedirectToAction("Details", "ProjectHelper", new
+                    {
+                        projectId = currTask.ProjectId
+                    });
+                }
+            }
+            else
+            {
+                return NotFound();
+            }
         }
 
         // POST: TaskHelperController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult Edit(int Id, IFormCollection collection)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                ProjectTask taskToBeEdited = _db.Tasks.First(t => t.Id == Id);
+                taskToBeEdited.Name =  collection["Name"];
+                taskToBeEdited.PercentageCompleted = double.Parse(collection["PercentageCompleted"].ToString());
+                taskToBeEdited.IsCompleted = bool.Parse(collection["IsCompleted"]);
+                taskToBeEdited.Priority = (Priority)Enum.Parse(typeof(Priority), collection["Priority"].ToString());               
+                taskToBeEdited.EndDate = DateTime.Parse(collection["EndDate"]);
+                taskToBeEdited.DeadLine = DateTime.Parse(collection["DeadLine"]);
+
+                _db.SaveChanges();
+
+                return RedirectToAction("Details", new
+                {
+                    taskId = taskToBeEdited.Id
+                } );
             }
             catch
             {
