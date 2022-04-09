@@ -24,9 +24,24 @@ namespace Finalproject.Controllers
         }
 
         // GET: TaskHelperController/Details/5
-        public ActionResult Details(int id)
+        public ActionResult Details(int taskId)
         {
-            return View();
+            try
+            {
+                ProjectTask currTask = _db.Tasks.First(t => t.Id == taskId);
+                if ( currTask != null )
+                {
+                    return View(currTask);
+                }
+                else
+                {
+                    return NotFound();
+                }
+            }
+            catch ( Exception ex )
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         // GET: TaskHelperController/Create

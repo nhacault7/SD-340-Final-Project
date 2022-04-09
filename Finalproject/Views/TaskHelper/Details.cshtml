@@ -1,0 +1,61 @@
+﻿@model Finalproject.Models.ProjectTask
+
+
+<div>
+    <h2>Task Details</h2>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.PercentageCompleted)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.PercentageCompleted)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.IsCompleted)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.IsCompleted)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Priority)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Priority)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.StartDate)
+        </dt>
+        <dd class = "col-sm-10">
+               @(Model.StartDate == null ? "" : ((DateTime)Model.StartDate).ToString("yyyy-MM-dd"))        
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.EndDate)
+        </dt>
+        <dd class = "col-sm-10">
+            @(Model.EndDate == null ? "" : ((DateTime)Model.EndDate).ToString("yyyy-MM-dd"))      
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.DeadLine)
+        </dt>
+        <dd class = "col-sm-10">
+            @(Model.DeadLine == null ? "" : ((DateTime)Model.DeadLine).ToString("yyyy-MM-dd"))   
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Project)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Project.Id)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>
