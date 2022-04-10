@@ -1,0 +1,22 @@
+﻿@model SelectList
+<h3>Assign a developer to the task</h3>
+<br />
+<form method="post" asp-action="Assign" asp-route-taskId="@ViewBag.Task.Id">
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label">Task</label>
+        <div class="col-sm-10">
+            <input type="text" readonly class="form-control-plaintext" value="@ViewBag.Task.Name">
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label">Developer</label>
+        <div class="col-sm-10">
+            <select class="control-label" name="developerId" asp-items=@ViewBag.Developers>
+                <option></option>
+            </select>
+        </div>
+    </div>
+    <div class="form-group col-sm-4">
+        <button type="submit" class="btn btn-primary mb-2">Confirm</button>
+    </div>
+</form>
