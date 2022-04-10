@@ -43,6 +43,27 @@ namespace Finalproject.Controllers
             return RedirectToAction("Index");
         }
 
+        public async Task<IActionResult> UpdateReadStatus(int id)
+        {
+            var notification = _db.Notifications.First(n => n.Id == id);
+
+            if (notification != null)
+            {
+                if (notification.IsRead == false)
+                {
+                    notification.IsRead = true;
+                }
+                else
+                {
+                    notification.IsRead = false;
+                }
+                
+                _db.SaveChanges();
+            }
+
+            return RedirectToAction("Index");
+        }
+
         public static async void Update(ApplicationUser currentUser, ApplicationDbContext db)
         {
             var allUserNotifications = db.Notifications.Where(n => n.UserCreator == currentUser).ToList();
