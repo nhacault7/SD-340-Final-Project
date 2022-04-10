@@ -55,19 +55,19 @@
             @Html.DisplayNameFor(model => model.StartDate)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.StartDate)
+            @(Model.StartDate == null ? "" : ((DateTime)Model.StartDate).ToString("yyyy-MM-dd"))
         </dd>
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.EndDate)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.EndDate)
+            @(Model.EndDate == null ? "" : ((DateTime)Model.EndDate).ToString("yyyy-MM-dd"))
         </dd>
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Deadline)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Deadline)
+            @(Model.Deadline == null ? "" : ((DateTime)Model.Deadline).ToString("yyyy-MM-dd"))
         </dd>
     </dl>
 </div>
@@ -126,7 +126,17 @@
                 <td>@item.PercentageCompleted</td>
                 <td>@item.Priority</td>
                 <td>@item.StartDate.ToString("yyyy-MM-dd")</td>
-                <td>@item.DeadLine.ToString("yyyy-MM-dd")</td>
+
+
+                @if ( item.DeadLine != null )
+                {
+                    <td>@item.DeadLine.ToString("yyyy-MM-dd")</td>
+                }
+                @if ( item.DeadLine == null )
+                {
+                    <td>To be determined</td>
+                }
+
                 @if ( item.UserCreator != null )
                 {
                     <td>@item.UserCreator.UserName</td>
@@ -138,8 +148,8 @@
                 <td>
                     <a asp-action="Assign" asp-controller="TaskHelper" asp-route-projectId="@Model.Id" asp-route-taskId="@item.Id">Assign task</a> |
                     <a asp-action="Edit" asp-controller="TaskHelper" asp-route-projectId="@Model.Id" asp-route-taskId="@item.Id">Edit</a> |
-                    <a asp-action="Details" asp-controller="TaskHelper"  asp-route-taskId="@item.Id">Details</a> |
-                    <a asp-action="Delete" asp-controller="TaskHelper"  asp-route-taskId="@item.Id">Delete</a>
+                    <a asp-action="Details" asp-controller="TaskHelper" asp-route-taskId="@item.Id">Details</a> |
+                    <a asp-action="Delete" asp-controller="TaskHelper" asp-route-taskId="@item.Id">Delete</a>
                 </td>
             </tr>
         }
@@ -147,5 +157,5 @@
 </table>
 
 <div>
-     <a asp-action="Index"  asp-controller="Dashboard">Back to List</a>
+    <a asp-action="Index" asp-controller="Dashboard">Back to List</a>
 </div>

@@ -23,10 +23,10 @@ namespace Finalproject.Controllers
         public ActionResult Index()
         {
             var currUserName = User.Identity.Name;
-            
-            var UserProjectList =  _db.UserProjects.Where(up => up.User.UserName == currUserName).ToList();
 
-            var projectList = _db.Projects.Include(p=>p.UserProjects).ToList();
+            var UserProjectList = _db.UserProjects.Where(up => up.User.UserName == currUserName).ToList();
+
+            var projectList = _db.Projects.Include(p => p.UserProjects).ToList();
 
             return View(projectList);
         }
@@ -34,8 +34,8 @@ namespace Finalproject.Controllers
         // GET: ProjectHelperController/Details/5
         public ActionResult Details(int projectId)
         {
-            ViewBag.tasks = _db.Tasks.Include(t=>t.UserCreator).Where(t => t.ProjectId == projectId).ToList();
-            var currProject =  _db.Projects.Where(p=>p.Id == projectId).First();       
+            ViewBag.tasks = _db.Tasks.Include(t => t.UserCreator).Where(t => t.ProjectId == projectId).ToList();
+            var currProject = _db.Projects.Where(p => p.Id == projectId).First();
             return View(currProject);
         }
 
@@ -60,21 +60,20 @@ namespace Finalproject.Controllers
         {
             try
             {
-                if (ModelState.IsValid)
+                if ( ModelState.IsValid )
                 {
                     var currUsername = User.Identity.Name;
                     ApplicationUser currUser = await _userManager.FindByEmailAsync(currUsername);
                     //add new project to db
                     Project project = new Project();
                     project.Title = collection["Title"].ToString();
-                    project.Description = collection["Description"].ToString();
+                    project.Description = collection["Description"] != "" ? collection["Description"].ToString() : null;
+                    project.Deadline = collection["Deadline"] != "" ? DateTime.Parse(collection["Deadline"]) : null;
+                    project.Priority = collection["Priority"] != "" ? (Priority)Enum.Parse(typeof(Priority), collection["Priority"].ToString()) : null;
+                    project.Budget = collection["Budget"] != "" ? double.Parse(collection["Budget"]) : null;
                     project.StartDate = DateTime.Today;
                     project.PercentageCompleted = 0;
                     project.TotalCost = 0;
-                    project.IsCompleted = false;
-                    project.Deadline = DateTime.Parse(collection["Deadline"]);
-                    project.Priority = (Priority)Enum.Parse(typeof(Priority), collection["Priority"].ToString());
-                    project.Budget = double.Parse(collection["Budget"]);
                     project.IsCompleted = false;
                     _db.Projects.Add(project);
 
@@ -105,8 +104,8 @@ namespace Finalproject.Controllers
         // GET: ProjectHelperController/Edit/5
         public async Task<ActionResult> Edit(int projectId)
         {
-           UserProject currProject = _db.UserProjects.Where(up => up.ProjectId == projectId).First();
-           ApplicationUser currUser = await _userManager.FindByEmailAsync(User.Identity.Name);
+            UserProject currProject = _db.UserProjects.Where(up => up.ProjectId == projectId).First();
+            ApplicationUser currUser = await _userManager.FindByEmailAsync(User.Identity.Name);
             if ( currProject.UserId == currUser.Id )
             {
                 List<SelectListItem> priorities = new List<SelectListItem>
@@ -117,13 +116,13 @@ namespace Finalproject.Controllers
                 new SelectListItem(){ Text = "Low", Value = Priority.Low.ToString() }
             };
                 ViewBag.priorityList = priorities;
-                Project project =  _db.Projects.Where(p => p.Id == currProject.ProjectId).First();
+                Project project = _db.Projects.Where(p => p.Id == currProject.ProjectId).First();
                 return View(project);
             }
             else
             {
                 TempData["msg"] = "Sorry, only the project owner can edit this project.";
-                return RedirectToAction("Index","Dashboard");
+                return RedirectToAction("Index", "Dashboard");
             }
 
         }
@@ -135,22 +134,22 @@ namespace Finalproject.Controllers
         {
             try
             {
-                ModelState.Remove("TotalCost");
-                ModelState.Remove("PercentageCompleted");
-                ModelState.Remove("IsCompleted");
+                //ModelState.Remove("TotalCost");
+                //ModelState.Remove("PercentageCompleted");
+                //ModelState.Remove("IsCompleted");
                 if ( ModelState.IsValid )
                 {
                     Project projectToUpdate = _db.Projects.Where(p => p.Id == Id).First();
                     projectToUpdate.Title = collection["Title"].ToString();
-                    projectToUpdate.Description = collection["Description"].ToString();
-                    projectToUpdate.PercentageCompleted = double.Parse(collection["PercentageCompleted"].ToString());
-                    projectToUpdate.IsCompleted = bool.Parse(collection["IsCompleted"].ToString());
-                    projectToUpdate.Budget = double.Parse(collection["Budget"].ToString());
-                    projectToUpdate.TotalCost = float.Parse(collection["TotalCost"].ToString());
-                    projectToUpdate.Priority = (Priority)Enum.Parse(typeof(Priority), collection["Priority"].ToString());
-                    projectToUpdate.StartDate = DateTime.Parse(collection["StartDate"]);
-                    projectToUpdate.EndDate = DateTime.Parse(collection["EndDate"]);
-                    projectToUpdate.Deadline = DateTime.Parse(collection["Deadline"]);
+                    projectToUpdate.Description = collection["Description"] != "" ? collection["Description"].ToString() : null;
+                    projectToUpdate.PercentageCompleted = collection["PercentageCompleted"] != "" ? double.Parse(collection["PercentageCompleted"].ToString()) : null;
+                    projectToUpdate.IsCompleted = collection["IsCompleted"] != "" ? bool.Parse(collection["IsCompleted"].ToString()) : null;
+                    projectToUpdate.Budget = collection["Budget"] != "" ? double.Parse(collection["Budget"].ToString()) : null;
+                    projectToUpdate.TotalCost = collection["TotalCost"] != "" ? float.Parse(collection["TotalCost"].ToString()) : null;
+                    projectToUpdate.Priority = collection["Priority"] != "" ? (Priority)Enum.Parse(typeof(Priority), collection["Priority"].ToString()) : null;
+                    projectToUpdate.StartDate = collection["StartDate"] != "" ? DateTime.Parse(collection["StartDate"]) : null;
+                    projectToUpdate.EndDate = collection["EndDate"] != "" ? DateTime.Parse(collection["EndDate"]) : null;
+                    projectToUpdate.Deadline = collection["Deadline"] != "" ? DateTime.Parse(collection["Deadline"]) : null;
 
                     _db.SaveChanges();
                     return RedirectToAction("Index", "Dashboard");
@@ -159,12 +158,12 @@ namespace Finalproject.Controllers
                 {
                     return BadRequest();
                 }
-             
+
 
             }
             catch
             {
-               
+
                 return View();
             }
         }
@@ -172,7 +171,7 @@ namespace Finalproject.Controllers
         // GET: ProjectHelperController/Delete/5
         public ActionResult Delete(int projectId)
         {
-            Project projectToDelete =   _db.Projects.First(p => p.Id == projectId);
+            Project projectToDelete = _db.Projects.First(p => p.Id == projectId);
             return View(projectToDelete);
         }
 
@@ -183,10 +182,10 @@ namespace Finalproject.Controllers
         {
             try
             {
-              var projectToDelete =  _db.Projects.First(p => p.Id == Id);
-              var userProjectDelete=   _db.UserProjects.First(up => up.ProjectId == Id);
-              var tasksDelete =  _db.Tasks.Where(t => t.ProjectId == Id).ToList();
-            
+                var projectToDelete = _db.Projects.First(p => p.Id == Id);
+                var userProjectDelete = _db.UserProjects.First(up => up.ProjectId == Id);
+                var tasksDelete = _db.Tasks.Where(t => t.ProjectId == Id).ToList();
+
                 //remove taskes of project
                 _db.Tasks.RemoveRange(tasksDelete);
                 //remove project-user relationship
