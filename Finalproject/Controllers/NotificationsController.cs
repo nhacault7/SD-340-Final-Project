@@ -49,7 +49,29 @@ namespace Finalproject.Controllers
                 _db.SaveChanges();
             }
 
-            //var projects = _db.Projects.Include(t => t.Tasks).ToList();
+            var tasks = _db.Tasks.Where(t => t.UserCreator == currentUser).ToList();
+
+            if (tasks.Any())
+            {
+                DateTime today = DateTime.Today;
+
+                foreach (var task in tasks)
+                {
+                    if (task.IsCompleted == false && task.DeadLine == today.AddDays(1))
+                    {
+                        Notification taNotification = new TaskNotification();
+                        taNotification.Title = "Task: " + task.Name + " is one day away from its deadline";
+                        taNotification.IsRead = false;
+                        taNotification.Description = "This task is only " + task.PercentageCompleted + "% complete";
+                        taNotification.TaskId = task.Id;
+                        taNotification.UserCreator = currentUser;
+
+                        _db.Notifications.Add(taNotification);
+                        _db.SaveChanges();
+                    }
+                }
+            }
+
             var userProjects = _db.UserProjects.Include(up => up.Project).Where(up => up.UserId == currentUser.Id).ToList();
             List<Project> projects = new List<Project>();
 
@@ -81,8 +103,6 @@ namespace Finalproject.Controllers
                     }
                 }
             }
-
-
 
             return RedirectToAction("Index");
         }
