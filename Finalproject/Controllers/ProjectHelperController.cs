@@ -68,7 +68,10 @@ namespace Finalproject.Controllers
                     Project project = new Project();
                     project.Title = collection["Title"].ToString();
                     project.Description = collection["Description"].ToString();
-                    project.StartDate = DateTime.Parse(collection["StartDate"]);
+                    project.StartDate = DateTime.Today;
+                    project.PercentageCompleted = 0;
+                    project.TotalCost = 0;
+                    project.IsCompleted = false;
                     project.Deadline = DateTime.Parse(collection["Deadline"]);
                     project.Priority = (Priority)Enum.Parse(typeof(Priority),collection["Priority"].ToString());
                     project.Budget = double.Parse(collection["Budget"]);
