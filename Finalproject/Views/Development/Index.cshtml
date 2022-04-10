@@ -81,6 +81,7 @@
                     {
                         <a asp-action="AddComments" asp-route-taskId="@item.Id">Add Comments</a>
                     }
+                <a asp-controller="Comments" asp-action="Create" asp-route-taskId="@item.Id">Add Urgent Comment</a> |
                 
             </td>
         </tr>

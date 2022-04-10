@@ -24,5 +24,48 @@ namespace Finalproject.Controllers
             _userManager = userManager;
             _roleManager = roleManager;
         }
+
+        // GET: Comments/Create
+        public IActionResult Create(int taskId)
+        {
+            ViewBag.TaskId = taskId;
+
+            return View();
+        }
+
+        // POST: Comments/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(IFormCollection collection, int taskId)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var task = _db.Tasks.Include(t => t.Project).First(t => t.Id == taskId);
+                    var userProjects = _db.UserProjects.Include(up => up.Project).First(up => up.ProjectId == task.Project.Id);
+                    ApplicationUser projectManager = await _userManager.FindByIdAsync(userProjects.UserId);
+
+                    Comment comment = new Comment();
+                    comment.Text = collection["Text"].ToString();
+                    comment.CommentType = CommentType.Urgent;
+                    comment.TaskId = taskId;
+                    comment.Task = task;
+                    comment.UserCreator = projectManager;
+                    _db.Add(comment);
+                    await _db.SaveChangesAsync();
+                    return RedirectToAction("Index", "Development");
+                }
+                else
+                {
+                    return BadRequest();
+                }
+                
+            }
+            catch (Exception ex)
+            {
+                return View();
+            }
+        }
     }
 }
