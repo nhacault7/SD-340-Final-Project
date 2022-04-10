@@ -111,6 +111,31 @@ namespace Finalproject.Controllers
                     }
                 }
             }
+
+            var comments = db.Comments.Where(c => c.UserCreator == currentUser).ToList();
+
+            if (comments.Any())
+            {
+                foreach (var comment in comments)
+                {
+                    Notification taNotification = new TaskNotification();
+                    taNotification.Title = comment.Text;
+                    taNotification.IsRead = false;
+                    if (comment.CommentType == CommentType.Urgent)
+                    {
+                        taNotification.Description = "Urgent comment";
+                    }
+                    else
+                    {
+                        taNotification.Description = "Comment";
+                    }
+                    taNotification.TaskId = comment.TaskId;
+                    taNotification.UserCreator= currentUser;
+
+                    db.Notifications.Add(taNotification);
+                    db.SaveChanges();
+                }
+            }
         }
     }
 }
