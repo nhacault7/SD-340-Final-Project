@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 
 namespace Finalproject.Controllers
 {
@@ -11,16 +12,90 @@ namespace Finalproject.Controllers
     {
         private ApplicationDbContext _db;
         private UserManager<ApplicationUser> _userManager;
+        private RoleManager<IdentityRole> _roleManager;
 
-        public TaskHelperController(ApplicationDbContext db, UserManager<ApplicationUser> userManager)
+        public TaskHelperController(ApplicationDbContext db, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
         {
             _db = db;
             _userManager = userManager;
+            _roleManager = roleManager;
         }
         // GET: TaskHelperController
         public ActionResult Index()
         {
             return View();
+        }
+
+        public async Task<ActionResult> Assign(int projectId, int taskId)
+        {
+            ProjectTask taskToAssign = _db.Tasks.Include(t=>t.UserCreator).First(t => t.Id == taskId);
+            Project currProject = _db.Projects.First(p => p.Id == projectId);
+            if ( taskToAssign != null && currProject != null )
+            {
+                //manager cannot assign task that already has a developer
+                if ( taskToAssign.UserCreator!= null )
+                {
+                    return RedirectToAction("Details", "ProjectHelper", new
+                    {
+                        projectId = currProject.Id
+                    });
+
+                }
+                else if ( taskToAssign.ProjectId == currProject.Id )
+                {
+                    var developerRole = await _roleManager.FindByNameAsync("Developer");
+                    //find all users with developer role
+                    var developerIds = _db.UserRoles.Where(u => u.RoleId == developerRole.Id).ToList();
+                    //create and pass a list of developers to view
+                    List<ApplicationUser> developers = new List<ApplicationUser>();
+                    var developerList = new List<SelectListItem>();
+                    foreach ( var item in developerIds )
+                    {
+                        ApplicationUser developer = await _userManager.FindByIdAsync(item.UserId);
+                        developerList.Add(new SelectListItem
+                        {
+                            Value = developer.Id,
+                            Text = developer.UserName
+                        });
+                    }
+                    ViewBag.Developers = developerList;
+                //    SelectList selectlist = new SelectList(developers, "Id", "UserName");     
+                //   ViewBag.Developers = selectlist;
+                    ViewBag.Task = taskToAssign;
+                    return View();
+                }
+                else
+                {
+                    return BadRequest();
+                }
+         
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Assign(int taskId, string developerId)
+        {
+           ApplicationUser developer = await _userManager.FindByIdAsync(developerId);
+           ProjectTask taskToAssign =  _db.Tasks.First(t => t.Id == taskId);
+            if ( developer != null && taskToAssign != null )
+            {
+                taskToAssign.UserCreator = developer;
+                _db.SaveChanges();
+                return RedirectToAction("Details", "ProjectHelper", new
+                {
+                    projectId = taskToAssign.ProjectId
+                });
+            }
+            else
+            {
+                return NotFound();
+            }
+           
+
         }
 
         // GET: TaskHelperController/Details/5
@@ -78,7 +153,7 @@ namespace Finalproject.Controllers
                     newTask.PercentageCompleted = 0;
                     newTask.StartDate = DateTime.Today;
                     newTask.IsCompleted = false;
-                    
+
                     _db.Tasks.Add(newTask);
                     _db.SaveChanges();
 
@@ -108,7 +183,7 @@ namespace Finalproject.Controllers
                 ApplicationUser projectManager = await _userManager.FindByNameAsync(currUserName);
                 //to check if the current project belongs to the corresponding project manager
                 var belongsToTheManager = _db.UserProjects.Where(u => u.UserId == projectManager.Id).Any(u => u.ProjectId == currTask.ProjectId);
-               
+
                 if ( belongsToTheManager )
                 {
                     ViewBag.projectId = currTask.ProjectId;
@@ -123,7 +198,7 @@ namespace Finalproject.Controllers
                     return View(currTask);
                 }
                 else
-                {        
+                {
                     return RedirectToAction("Details", "ProjectHelper", new
                     {
                         projectId = currTask.ProjectId
@@ -144,11 +219,12 @@ namespace Finalproject.Controllers
             try
             {
                 ProjectTask taskToBeEdited = _db.Tasks.First(t => t.Id == Id);
-                taskToBeEdited.Name =  collection["Name"];
-                taskToBeEdited.PercentageCompleted = double.Parse(collection["PercentageCompleted"].ToString());
-                taskToBeEdited.IsCompleted = bool.Parse(collection["IsCompleted"]);
-                taskToBeEdited.Priority = (Priority)Enum.Parse(typeof(Priority), collection["Priority"].ToString());               
-                taskToBeEdited.EndDate = DateTime.Parse(collection["EndDate"]);
+            
+                taskToBeEdited.Name = collection["Name"] !=""? collection["Name"]:"" ;
+                taskToBeEdited.PercentageCompleted = collection["PercentageCompleted"]!=""? double.Parse(collection["PercentageCompleted"].ToString()):0;
+                taskToBeEdited.IsCompleted = collection["IsCompleted"]!=""? bool.Parse(collection["IsCompleted"]):false;
+                taskToBeEdited.Priority = (Priority)Enum.Parse(typeof(Priority), collection["Priority"].ToString());
+                taskToBeEdited.EndDate = collection["EndDate"]!=""? DateTime.Parse(collection["EndDate"]):null;
                 taskToBeEdited.DeadLine = DateTime.Parse(collection["DeadLine"]);
 
                 _db.SaveChanges();
@@ -156,7 +232,7 @@ namespace Finalproject.Controllers
                 return RedirectToAction("Details", new
                 {
                     taskId = taskToBeEdited.Id
-                } );
+                });
             }
             catch
             {
@@ -165,7 +241,7 @@ namespace Finalproject.Controllers
         }
 
         // GET: TaskHelperController/Delete/5
-        public async Task<ActionResult> Delete(int taskId)
+        public async Task<ActionResult> Delete(int taskId )
         {
             ProjectTask currTask = _db.Tasks.First(t => t.Id == taskId);
             if ( currTask != null )
@@ -177,6 +253,7 @@ namespace Finalproject.Controllers
 
                 if ( belongsToTheManager )
                 {
+                    ViewBag.ProjectId = currTask.ProjectId;
                     return View(currTask);
                 }
                 else
@@ -200,10 +277,10 @@ namespace Finalproject.Controllers
         {
             try
             {
-               ProjectTask taskToDelete = _db.Tasks.First(t => t.Id == Id);
+                ProjectTask taskToDelete = _db.Tasks.First(t => t.Id == Id);
                 if ( taskToDelete != null )
                 {
-                     var currTaskProjectId = taskToDelete.ProjectId;
+                    var currTaskProjectId = taskToDelete.ProjectId;
                     _db.Remove(taskToDelete);
                     _db.SaveChanges();
                     return RedirectToAction("Details", "ProjectHelper", new
