@@ -37,42 +37,27 @@ namespace Finalproject.Controllers
         public async Task<IActionResult> Index(string? ok)
         {
             ApplicationUser currentUser = await _userManager.FindByNameAsync(User.Identity.Name);
-            var allUserNotifications = _db.Notifications.Where(n => n.UserCreator == currentUser).ToList();
+
+            Update(currentUser, _db);
+
+            return RedirectToAction("Index");
+        }
+
+        public static async void Update(ApplicationUser currentUser, ApplicationDbContext db)
+        {
+            var allUserNotifications = db.Notifications.Where(n => n.UserCreator == currentUser).ToList();
 
             if (allUserNotifications.Any())
             {
                 foreach (var notification in allUserNotifications)
                 {
-                    _db.Notifications.Remove(notification);
+                    db.Notifications.Remove(notification);
                 }
 
-                _db.SaveChanges();
+                db.SaveChanges();
             }
 
-            var tasks = _db.Tasks.Where(t => t.UserCreator == currentUser).ToList();
-
-            if (tasks.Any())
-            {
-                DateTime today = DateTime.Today;
-
-                foreach (var task in tasks)
-                {
-                    if (task.IsCompleted == false && task.DeadLine == today.AddDays(1))
-                    {
-                        Notification taNotification = new TaskNotification();
-                        taNotification.Title = "Task: " + task.Name + " is one day away from its deadline";
-                        taNotification.IsRead = false;
-                        taNotification.Description = "This task is only " + task.PercentageCompleted + "% complete";
-                        taNotification.TaskId = task.Id;
-                        taNotification.UserCreator = currentUser;
-
-                        _db.Notifications.Add(taNotification);
-                        _db.SaveChanges();
-                    }
-                }
-            }
-
-            var userProjects = _db.UserProjects.Include(up => up.Project).Where(up => up.UserId == currentUser.Id).ToList();
+            var userProjects = db.UserProjects.Include(up => up.Project).Where(up => up.UserId == currentUser.Id).ToList();
             List<Project> projects = new List<Project>();
 
             if (userProjects.Any())
@@ -98,13 +83,34 @@ namespace Finalproject.Controllers
                         pyNotification.ProjectId = project.Id;
                         pyNotification.UserCreator = currentUser;
 
-                        _db.Notifications.Add(pyNotification);
-                        _db.SaveChanges();
+                        db.Notifications.Add(pyNotification);
+                        db.SaveChanges();
                     }
                 }
             }
 
-            return RedirectToAction("Index");
+            var tasks = db.Tasks.Where(t => t.UserCreator == currentUser).ToList();
+
+            if (tasks.Any())
+            {
+                DateTime today = DateTime.Today;
+
+                foreach (var task in tasks)
+                {
+                    if (task.IsCompleted == false && task.DeadLine == today.AddDays(1))
+                    {
+                        Notification taNotification = new TaskNotification();
+                        taNotification.Title = "Task: " + task.Name + " is one day away from its deadline";
+                        taNotification.IsRead = false;
+                        taNotification.Description = "This task is only " + task.PercentageCompleted + "% complete";
+                        taNotification.TaskId = task.Id;
+                        taNotification.UserCreator = currentUser;
+
+                        db.Notifications.Add(taNotification);
+                        db.SaveChanges();
+                    }
+                }
+            }
         }
     }
 }
