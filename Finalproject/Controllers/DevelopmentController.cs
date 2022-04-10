@@ -29,6 +29,12 @@ namespace Finalproject.Controllers
             ApplicationUser currentUser = await _userManager.FindByNameAsync(User.Identity.Name);
             var allTasksOfDev = _db.Tasks.Include(t => t.Project).Where(t => t.UserCreator.Id == currentUser.Id);
 
+            NotificationsController.Update(currentUser, _db);
+
+            var unreadNotifications = _db.Notifications.Where(n => n.UserCreator.Id == currentUser.Id && n.IsRead == false).ToList();
+            int count = unreadNotifications.Count();
+            ViewData["Count"] = count;
+
             if (orderString != null)
             {
                 if (orderString == "IsCompleted")
