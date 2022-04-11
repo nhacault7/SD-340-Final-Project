@@ -4,36 +4,38 @@
     ViewData["Title"] = "OverdueTasks";
 }
 
-<h1>OverdueTasks</h1>
+<h1>Overdue Tasks from all of your Projects</h1>
 
 
 <table class="table">
     <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Project)
+         <tr>
+            <th >
+                Project
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
+            <th >
+                Task
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.PercentageCompleted)
+            <th >
+                Progress %
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IsCompleted)
+            <th >
+                Status
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Priority)
+         
+            <th >
+                Priority
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.StartDate)
+            <th >
+               Start&nbsp;&nbsp;Date&nbsp;
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.EndDate)
+            <th >
+                End&nbsp;&nbsp;Date&nbsp;
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DeadLine)
+            <th >
+                Deadline
             </th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -46,22 +48,24 @@
                 @Html.DisplayFor(modelItem => item.Name)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.PercentageCompleted)
+                <progress style="width:70px;" max="100" value="@item.PercentageCompleted"></progress>
+                <span id="show" style="font-size:12px;">@item.PercentageCompleted&nbsp;</span> &nbsp;
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.IsCompleted)
+                @if(item.IsCompleted==true){<p>Completed</p>}
+                @if(item.IsCompleted==false){<p>Pending</p>}
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Priority)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.StartDate)
+                  @item.StartDate.Value.ToString("yy/MM/dd")
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.EndDate)
+                  @if(item.EndDate != null){@item.EndDate.Value.ToString("yy/MM/dd")}
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.DeadLine)
+                @item.DeadLine.Value.ToString("yy/MM/dd")
             </td>
 
         </tr>

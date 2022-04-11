@@ -49,9 +49,16 @@
                 @Html.DisplayFor(modelItem => item.Discriminator)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    <a asp-action="UpdateReadStatus" asp-route-id="@item.Id">
+                        @if (item.IsRead == false)
+                        {
+                            <div>Mark As Read</div>
+                        }
+                        else
+                        {
+                            <div>Mark as Unread</div>
+                        }
+                    </a>
             </td>
         </tr>
 }

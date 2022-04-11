@@ -43,15 +43,44 @@ namespace Finalproject.Controllers
             return RedirectToAction("Index");
         }
 
+        public async Task<IActionResult> UpdateReadStatus(int id)
+        {
+            var notification = _db.Notifications.First(n => n.Id == id);
+
+            if (notification != null)
+            {
+                if (notification.IsRead == false)
+                {
+                    notification.IsRead = true;
+                }
+                else
+                {
+                    notification.IsRead = false;
+                }
+                
+                _db.SaveChanges();
+            }
+
+            return RedirectToAction("Index");
+        }
+
         public static async void Update(ApplicationUser currentUser, ApplicationDbContext db)
         {
             var allUserNotifications = db.Notifications.Where(n => n.UserCreator == currentUser).ToList();
+            List<Notification> readNotifications = new List<Notification>();
 
             if (allUserNotifications.Any())
             {
                 foreach (var notification in allUserNotifications)
                 {
-                    db.Notifications.Remove(notification);
+                    if (notification.IsRead == true)
+                    {
+                        readNotifications.Add(notification);
+                    }
+                    else
+                    {
+                        db.Notifications.Remove(notification);
+                    }
                 }
 
                 db.SaveChanges();
@@ -83,8 +112,20 @@ namespace Finalproject.Controllers
                         pyNotification.ProjectId = project.Id;
                         pyNotification.UserCreator = currentUser;
 
-                        db.Notifications.Add(pyNotification);
-                        db.SaveChanges();
+                        bool duplicate = false;
+                        foreach (var notification in readNotifications)
+                        {
+                            if (CheckIfDuplicate(notification, pyNotification, "ProjectNotification") == true)
+                            {
+                                duplicate = true;
+                            }
+                        }
+
+                        if (duplicate == false)
+                        {
+                            db.Notifications.Add(pyNotification);
+                            db.SaveChanges();
+                        }
                     }
                 }
             }
@@ -106,8 +147,20 @@ namespace Finalproject.Controllers
                         taNotification.TaskId = task.Id;
                         taNotification.UserCreator = currentUser;
 
-                        db.Notifications.Add(taNotification);
-                        db.SaveChanges();
+                        bool duplicate = false;
+                        foreach (var notification in readNotifications)
+                        {
+                            if (CheckIfDuplicate(notification, taNotification, "TaskNotification") == true)
+                            {
+                                duplicate = true;
+                            }
+                        }
+
+                        if (duplicate == false)
+                        {
+                            db.Notifications.Add(taNotification);
+                            db.SaveChanges();
+                        }
                     }
                 }
             }
@@ -132,9 +185,35 @@ namespace Finalproject.Controllers
                     taNotification.TaskId = comment.TaskId;
                     taNotification.UserCreator= currentUser;
 
-                    db.Notifications.Add(taNotification);
-                    db.SaveChanges();
+                    bool duplicate = false;
+                    foreach (var notification in readNotifications)
+                    {
+                        if (CheckIfDuplicate(notification, taNotification, "TaskNotification") == true)
+                        {
+                            duplicate = true;
+                        }
+                    }
+
+                    if (duplicate == false)
+                    {
+                        db.Notifications.Add(taNotification);
+                        db.SaveChanges();
+                    }
                 }
+            }
+        }
+
+        public static bool CheckIfDuplicate(Notification notification, Notification newNotification, string discriminator)
+        {
+            if (notification.Title == newNotification.Title &&
+                notification.Description == newNotification.Description &&
+                notification.Discriminator == discriminator)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
             }
         }
     }
