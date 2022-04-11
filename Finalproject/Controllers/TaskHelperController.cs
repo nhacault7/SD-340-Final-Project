@@ -145,8 +145,8 @@ namespace Finalproject.Controllers
                 {
                     ProjectTask newTask = new ProjectTask();
                     newTask.Name = collection["Name"].ToString();
-                    newTask.Priority = (Priority)Enum.Parse(typeof(Priority), collection["Priority"].ToString());
-                    newTask.DeadLine = DateTime.Parse(collection["Deadline"]);
+                    newTask.Priority = collection["Priority"]!=""?(Priority)Enum.Parse(typeof(Priority), collection["Priority"].ToString()):null;
+                    newTask.DeadLine = collection["DeadLine"] != "" ? DateTime.Parse(collection["DeadLine"]) : null;
                     newTask.ProjectId = int.Parse(collection["ProjectId"].ToString());
 
                     //default value for a new created task
@@ -223,9 +223,9 @@ namespace Finalproject.Controllers
                 taskToBeEdited.Name = collection["Name"] !=""? collection["Name"]:"" ;
                 taskToBeEdited.PercentageCompleted = collection["PercentageCompleted"]!=""? double.Parse(collection["PercentageCompleted"].ToString()):0;
                 taskToBeEdited.IsCompleted = collection["IsCompleted"]!=""? bool.Parse(collection["IsCompleted"]):false;
-                taskToBeEdited.Priority = (Priority)Enum.Parse(typeof(Priority), collection["Priority"].ToString());
+                taskToBeEdited.Priority = collection["Priority"]!=""? (Priority)Enum.Parse(typeof(Priority), collection["Priority"].ToString()):null;
                 taskToBeEdited.EndDate = collection["EndDate"]!=""? DateTime.Parse(collection["EndDate"]):null;
-                taskToBeEdited.DeadLine = DateTime.Parse(collection["DeadLine"]);
+                taskToBeEdited.DeadLine = collection["DeadLine"] != "" ? DateTime.Parse(collection["DeadLine"]) : null;
 
                 _db.SaveChanges();
 
