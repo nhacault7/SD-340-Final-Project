@@ -1,10 +1,10 @@
 ﻿@model IEnumerable<Finalproject.Models.Project>
 
 @{
-    ViewData["Title"] = "ProjectsExceededBudget";
+    ViewData["Title"] = "Projects Over Budget";
 }
 
-<h1>ProjectsExceededBudget</h1>
+<h1>Projects Over Budget</h1>
 
 <table class="table">
     <thead>
@@ -16,25 +16,25 @@
                 @Html.DisplayNameFor(model => model.Description)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.PercentageCompleted)
+                Progress %
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.IsCompleted)
+                Status
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Budget)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.TotalCost)
+                Total Cost
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Priority)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.StartDate)
+                Starts
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.EndDate)
+                Ends
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Deadline)
@@ -51,28 +51,30 @@
                 @Html.DisplayFor(modelItem => item.Description)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.PercentageCompleted)
+               <progress style="width:70px;" max="100" value="@item.PercentageCompleted"></progress>
+                <span id="show" style="font-size:12px;">@item.PercentageCompleted&nbsp;</span> &nbsp;
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.IsCompleted)
+                @if(item.IsCompleted==true){<p>Completed</p>}
+                @if(item.IsCompleted==false){<p>Active</p>}
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Budget)
+               @string.Format("{0:C}", item.Budget)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.TotalCost)
+                @string.Format("{0:C}", item.TotalCost)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Priority)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.StartDate)
+                @item.StartDate.Value.ToString("yy/MM/dd")
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.EndDate)
+                @if(item.EndDate != null){@item.EndDate.Value.ToString("yy/MM/dd")}
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Deadline)
+                @item.Deadline.Value.ToString("yy/MM/dd")
             </td>
         </tr>
 }
