@@ -229,9 +229,14 @@ namespace Finalproject.Controllers
 
                 _db.SaveChanges();
 
-                return RedirectToAction("Details", new
+                //return RedirectToAction("Details",  new
+                //{
+                //    taskId = taskToBeEdited.Id
+                //});
+
+                return RedirectToAction("Details", "ProjectHelper", new
                 {
-                    taskId = taskToBeEdited.Id
+                    projectId = taskToBeEdited.ProjectId
                 });
             }
             catch

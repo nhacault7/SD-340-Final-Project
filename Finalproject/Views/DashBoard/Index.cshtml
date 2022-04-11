@@ -93,7 +93,8 @@
                 @if(item.EndDate != null){@item.EndDate.Value.ToString("yy/MM/dd")}
             </td>
             <td>
-                @item.Deadline.Value.ToString("yy/MM/dd")
+                @if(item.Deadline != null){@item.Deadline.Value.ToString("yy/MM/dd")}
+                
             </td>
             <td>
                  @if(item.IsCompleted==false){<a asp-action="Edit" asp-controller="ProjectHelper" asp-route-projectId="@item.Id">Edit</a><span>&nbsp;|</span>}
