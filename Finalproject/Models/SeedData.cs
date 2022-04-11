@@ -19,6 +19,7 @@ namespace Finalproject.Models
                 "Developer",
             };
 
+
             if (!context.Roles.Any())
             {
                 foreach (string role in roles)
@@ -30,7 +31,7 @@ namespace Finalproject.Models
 
             if (!context.Users.Any())
             {
-                ApplicationUser seededUser = new ApplicationUser
+                ApplicationUser adminUser = new ApplicationUser
                 {
                     Email = "Admin@gmail.com",
                     NormalizedEmail = "ADMIN@GMAIL.COM",
@@ -39,12 +40,58 @@ namespace Finalproject.Models
                     EmailConfirmed = true,
                 };
 
-                var password = new PasswordHasher<ApplicationUser>();
-                var hashed = password.HashPassword(seededUser, "P@ssword1");
-                seededUser.PasswordHash = hashed;
+                ApplicationUser projectManager = new ApplicationUser
+                {
+                    Email = "ProjectManager@mitt.ca",
+                    NormalizedEmail = "PROJECTMANAGER@MITT.CA",
+                    UserName = "ProjectManager@mitt.ca",
+                    NormalizedUserName = "PROJECTMANAGER@MITT.CA",
+                    EmailConfirmed = true,
+                };
 
-                await userManager.CreateAsync(seededUser);
-                await userManager.AddToRoleAsync(seededUser, "Admin");
+                ApplicationUser developer1 = new ApplicationUser
+                {
+                    Email = "Developer1@mitt.ca",
+                    NormalizedEmail = "DEVELOPER1@MITT.CA",
+                    UserName = "Developer1@mitt.ca",
+                    NormalizedUserName = "DEVELOPER1@MITT.CA",
+                    EmailConfirmed = true,
+                };
+
+                ApplicationUser developer2 = new ApplicationUser
+                {
+                    Email = "Developer2@mitt.ca",
+                    NormalizedEmail = "DEVELOPER2@MITT.CA",
+                    UserName = "Developer2@mitt.ca",
+                    NormalizedUserName = "DEVELOPER2@MITT.CA",
+                    EmailConfirmed = true,
+                };
+
+                var password = new PasswordHasher<ApplicationUser>();
+
+                var hashed = password.HashPassword(adminUser, "P@ssword1");
+                adminUser.PasswordHash = hashed;
+
+                var hashed2 = password.HashPassword(projectManager, "P@ssword1");
+                projectManager.PasswordHash = hashed2;
+
+                var hashed3 = password.HashPassword(developer1, "P@ssword1");
+                developer1.PasswordHash = hashed3;
+
+                var hashed4 = password.HashPassword(developer2, "P@ssword1");
+                developer2.PasswordHash = hashed4;
+
+                await userManager.CreateAsync(adminUser);
+                await userManager.AddToRoleAsync(adminUser, "Admin");
+
+                await userManager.CreateAsync(projectManager);
+                await userManager.AddToRoleAsync(projectManager, "Project Manager");
+
+                await userManager.CreateAsync(developer1);
+                await userManager.AddToRoleAsync(developer1, "Developer");
+
+                await userManager.CreateAsync(developer2);
+                await userManager.AddToRoleAsync(developer2, "Developer");
 
             }
 
