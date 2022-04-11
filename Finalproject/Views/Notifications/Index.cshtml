@@ -8,7 +8,14 @@
 <h1>Index</h1>
 
 <p>
-    <a asp-controller="Dashboard">Back</a>
+    @if (ViewBag.Role == "Developer")
+    {
+        <a asp-controller="Development">Back</a>
+    }
+    else if (ViewBag.Role == "Project Manager") 
+    {
+        <a asp-controller="Dashboard">Back</a>
+    }
 </p>
 
 <table class="table">

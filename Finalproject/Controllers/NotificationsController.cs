@@ -30,6 +30,9 @@ namespace Finalproject.Controllers
         {
             ApplicationUser currentUser = await _userManager.FindByNameAsync(User.Identity.Name);
 
+            var role = await _userManager.GetRolesAsync(currentUser);
+            ViewBag.Role = role[0];
+
             return View(_db.Notifications.Where(n => n.UserCreator == currentUser).ToList());
         }
 
