@@ -33,15 +33,15 @@ namespace Finalproject.Controllers
             return View(_db.Notifications.Where(n => n.UserCreator == currentUser).ToList());
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Index(string? ok)
-        {
-            ApplicationUser currentUser = await _userManager.FindByNameAsync(User.Identity.Name);
+        //[HttpPost]
+        //public async Task<IActionResult> Index(string? ok)
+        //{
+        //    ApplicationUser currentUser = await _userManager.FindByNameAsync(User.Identity.Name);
 
-            Update(currentUser, _db);
+        //    Update(currentUser, _db);
 
-            return RedirectToAction("Index");
-        }
+        //    return RedirectToAction("Index");
+        //}
 
         public async Task<IActionResult> UpdateReadStatus(int id)
         {
