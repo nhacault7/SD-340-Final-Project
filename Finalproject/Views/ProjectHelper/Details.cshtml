@@ -64,13 +64,13 @@
             Ends
         </dt>
         <dd class="col-sm-10">
-           @if(@Model.EndDate != null){@Model.EndDate.Value.ToString("yy/MM/dd")}
+           @if(Model.EndDate != null){@Model.EndDate.Value.ToString("yy/MM/dd")}
         </dd>
         <dt class="col-sm-2">
             Deadline
         </dt>
         <dd class="col-sm-10">
-           @Model.Deadline.Value.ToString("yy/MM/dd")
+           @if(Model.Deadline != null){@Model.Deadline.Value.ToString("yy/MM/dd")}
        </dd>
     </dl>
 </div>
