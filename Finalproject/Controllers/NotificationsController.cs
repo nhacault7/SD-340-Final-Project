@@ -30,17 +30,10 @@ namespace Finalproject.Controllers
         {
             ApplicationUser currentUser = await _userManager.FindByNameAsync(User.Identity.Name);
 
+            var role = await _userManager.GetRolesAsync(currentUser);
+            ViewBag.Role = role[0];
+
             return View(_db.Notifications.Where(n => n.UserCreator == currentUser).ToList());
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> Index(string? ok)
-        {
-            ApplicationUser currentUser = await _userManager.FindByNameAsync(User.Identity.Name);
-
-            Update(currentUser, _db);
-
-            return RedirectToAction("Index");
         }
 
         public async Task<IActionResult> UpdateReadStatus(int id)

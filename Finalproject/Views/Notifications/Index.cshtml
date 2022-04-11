@@ -8,12 +8,15 @@
 <h1>Index</h1>
 
 <p>
-    <a asp-controller="Dashboard">Back</a>
+    @if (ViewBag.Role == "Developer")
+    {
+        <a asp-controller="Development">Back</a>
+    }
+    else if (ViewBag.Role == "Project Manager") 
+    {
+        <a asp-controller="Dashboard">Back</a>
+    }
 </p>
-
-<form asp-action="Index" method="post">
-<button type="submit">Refresh</button>
-</form>
 
 <table class="table">
     <thead>
