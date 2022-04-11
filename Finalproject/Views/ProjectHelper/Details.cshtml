@@ -6,6 +6,7 @@
 
 <h1>Project Details</h1>
 
+
 <div>
     <hr />
     <dl class="row">
@@ -22,28 +23,30 @@
             @Html.DisplayFor(model => model.Description)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.PercentageCompleted)
+            Progress %
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.PercentageCompleted)
+            <progress style="width:70px;" max="100" value="@Model.PercentageCompleted"></progress>
+            <span id="show" style="font-size:12px;">@Model.PercentageCompleted&nbsp;</span> &nbsp;
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.IsCompleted)
+            Status
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.IsCompleted)
+            @if(@Model.IsCompleted==true){<p>Completed</p>}
+            @if(@Model.IsCompleted==false){<p>Active</p>}
         </dd>
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Budget)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Budget)
+            @string.Format("{0:C}", @Model.Budget)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.TotalCost)
+            Total Cost
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.TotalCost)
+           @string.Format("{0:C}", @Model.TotalCost)
         </dd>
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Priority)
@@ -52,28 +55,28 @@
             @Html.DisplayFor(model => model.Priority)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.StartDate)
+            Starts
         </dt>
         <dd class="col-sm-10">
-            @(Model.StartDate == null ? "" : ((DateTime)Model.StartDate).ToString("yyyy-MM-dd"))
+             @Model.StartDate.Value.ToString("yy/MM/dd")
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.EndDate)
+            Ends
         </dt>
         <dd class="col-sm-10">
-            @(Model.EndDate == null ? "" : ((DateTime)Model.EndDate).ToString("yyyy-MM-dd"))
+           @if(@Model.EndDate != null){@Model.EndDate.Value.ToString("yy/MM/dd")}
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Deadline)
+            Deadline
         </dt>
         <dd class="col-sm-10">
-            @(Model.Deadline == null ? "" : ((DateTime)Model.Deadline).ToString("yyyy-MM-dd"))
-        </dd>
+           @Model.Deadline.Value.ToString("yy/MM/dd")
+       </dd>
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit Project</a> |
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Edit" asp-controller="ProjectHelper" asp-route-projectid="@Model?.Id">Edit Project</a> |
+    <a asp-action="Index" asp-controller="Dashboard">Back to List</a>
 </div>
 <br />
 @*<div >
@@ -110,9 +113,11 @@
     <thead>
         <tr>
             <th>Name</th>
-            <th>PercentageCompleted</th>
+            <th>Progress %</th>
+            <th>Status</th>
             <th>Priority</th>
-            <th>StartDate</th>
+            <th>Starts</th>
+            <th>Ends</th>
             <th>DeadLine</th>
             <th>Developer</th>
             <th>Manage Task</th>
@@ -123,10 +128,27 @@
         {
             <tr>
                 <td>@item.Name</td>
-                <td>@item.PercentageCompleted</td>
+                
+                <td><progress style="width:70px;" max="100" value="@item.PercentageCompleted"></progress>
+                <span id="show" style="font-size:12px;">@item.PercentageCompleted&nbsp;</span> &nbsp;</td>
+                
+                <td>
+                 @if(item.IsCompleted==true){<p>Completed</p>}
+                 @if(item.IsCompleted==false){<p>Pending</p>}
+                </td>
+
                 <td>@item.Priority</td>
+                
                 <td>@item.StartDate.ToString("yyyy-MM-dd")</td>
 
+                @if ( item.EndDate != null )
+                {
+                    <td>@item.EndDate.ToString("yyyy-MM-dd")</td>
+                }
+                @if ( item.EndDate == null )
+                {
+                    <td>To be determined</td>
+                }
 
                 @if ( item.DeadLine != null )
                 {
@@ -146,7 +168,8 @@
                     <td>No assigned developer yet</td>
                 }
                 <td>
-                    <a asp-action="Assign" asp-controller="TaskHelper" asp-route-projectId="@Model.Id" asp-route-taskId="@item.Id">Assign task</a> |
+                     @if ( item.UserCreator == null ){<a asp-action="Assign" asp-controller="TaskHelper" asp-route-projectId="@Model.Id" asp-route-taskId="@item.Id">Assign task</a><span>&nbsp;|</span>}    
+                    
                     <a asp-action="Edit" asp-controller="TaskHelper" asp-route-projectId="@Model.Id" asp-route-taskId="@item.Id">Edit</a> |
                     <a asp-action="Details" asp-controller="TaskHelper" asp-route-taskId="@item.Id">Details</a> |
                     <a asp-action="Delete" asp-controller="TaskHelper" asp-route-taskId="@item.Id">Delete</a>

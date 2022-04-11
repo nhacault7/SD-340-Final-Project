@@ -12,37 +12,46 @@
     <div class="col-md-4">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            
             <input type="hidden" asp-for="Id"/>
+            <input type="hidden" asp-for="IsCompleted"/>
+            <input type="hidden" asp-for="EndDate"/>
+            <input type="hidden" asp-for="TotalCost"/>
+
             <div class="form-group">
-                <label asp-for="Title" class="control-label"></label>
+                @*<label asp-for="Title" class="control-label"></label>*@
+                <p>Title</p>
                 <input asp-for="Title" class="form-control" />
                 <span asp-validation-for="Title" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Description" class="control-label"></label>
+                @*<label asp-for="Description" class="control-label"></label>*@
+                <p>Description</p>
                 <textarea asp-for="Description" class="form-control"></textarea>
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="PercentageCompleted" class="control-label"></label>
+                @*<label asp-for="PercentageCompleted" class="control-label"></label>*@
+                <p>Progress %</p>
                 <input asp-for="PercentageCompleted" class="form-control" />
                 <span asp-validation-for="PercentageCompleted" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            @*<div class="form-group">
                 <label asp-for="IsCompleted" class="control-label"></label>
                 <input asp-for="IsCompleted" class="form-control" />
                 <span asp-validation-for="IsCompleted" class="text-danger"></span>
-            </div>
+            </div>*@
             <div class="form-group">
                 <label asp-for="Budget" class="control-label"></label>
-                <input asp-for="Budget" class="form-control" />
+                <input asp-for="Budget" class="form-control"/>
                 <span asp-validation-for="Budget" class="text-danger"></span>
             </div>
-            <div class="form-group">
+          @*<div class="form-group">
                 <label asp-for="TotalCost" class="control-label"></label>
+                <p>Total Cost</p>
                 <input asp-for="TotalCost" class="form-control" />
                 <span asp-validation-for="TotalCost" class="text-danger"></span>
-            </div>
+            </div>*@
             <div class="form-group">
                 <label asp-for="Priority" class="control-label"></label>
                  <select asp-for="Priority" class="form-control" asp-items="@ViewBag.priorityList">
@@ -51,15 +60,15 @@
                 <span asp-validation-for="Priority" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="StartDate" class="control-label"></label>
-                <input asp-for="StartDate" class="form-control" />
+                <p>Starts</p>
+                <input asp-for="StartDate"  class="form-control" />
                 <span asp-validation-for="StartDate" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            @*<div class="form-group">
                 <label asp-for="EndDate" class="control-label"></label>
                 <input asp-for="EndDate" class="form-control" />
                 <span asp-validation-for="EndDate" class="text-danger"></span>
-            </div>
+            </div>*@
             <div class="form-group">
                 <label asp-for="Deadline" class="control-label"></label>
                 <input asp-for="Deadline" class="form-control" />
