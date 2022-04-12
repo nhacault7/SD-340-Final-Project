@@ -66,7 +66,7 @@ namespace Finalproject.Controllers
             {
                 foreach (var notification in allUserNotifications)
                 {
-                    if (notification.IsRead == true)
+                    if (notification.IsRead == false)
                     {
                         readNotifications.Add(notification);
                     }
