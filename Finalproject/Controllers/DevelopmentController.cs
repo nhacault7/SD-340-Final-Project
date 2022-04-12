@@ -40,7 +40,7 @@ namespace Finalproject.Controllers
             {
                 if (orderString == "IsCompleted")
                 {
-                    allTasksOfDev = allTasksOfDev.OrderByDescending(t => t.IsCompleted);
+                    allTasksOfDev = allTasksOfDev.OrderBy(t => t.IsCompleted);
                 }
                 else if (orderString == "PercentageCompleted")
                 {
